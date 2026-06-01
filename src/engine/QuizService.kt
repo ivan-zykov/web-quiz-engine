@@ -163,12 +163,12 @@ private fun NewQuiz.toEntity(user: AppUser): QuizEntity {
 }
 
 private fun QuizEntity.toDomain() = Quiz(
-    title = this.title ?: "",
-    text = this.text ?: "",
-    options = this.options ?: emptyList(),
+    title = requireNotNull(this.title) { "Error. QuizEntity.title must not be null" },
+    text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
+    options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
     answer = this.answers,
-    id = QuizId(this.id?.toInt() ?: -1),
-    authorUsername = this.author?.username ?: "",
+    id = QuizId(requireNotNull(this.id?.toInt()) { "Error. QuizEntity.id must not be null" }),
+    authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" },
 )
 
 private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(
