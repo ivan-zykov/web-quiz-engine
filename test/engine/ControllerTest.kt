@@ -78,55 +78,6 @@ class ControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `Getting initial quiz returns OK with one quiz`() {
-        mockMvc.get("$API_PATH/quiz") {
-            with(httpBasic(USERNAME, PASSWORD))
-        }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.title") { value("The Java Logo") }
-                jsonPath("$.text") { value("What is depicted on the Java logo?") }
-                jsonPath("$.options") { isArray() }
-                jsonPath("$.options[0]") { value("Robot") }
-                jsonPath("$.options[1]") { value("Tea leaf") }
-                jsonPath("$.options[2]") { value("Cup of coffee") }
-                jsonPath("$.options[3]") { value("Bug") }
-            }
-    }
-
-    @Test
-    fun `Solving initial quiz returns OK for correct answer`() {
-        mockMvc.post("$API_PATH/quiz?answer=2") {
-            with(httpBasic(USERNAME, PASSWORD))
-        }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.success") { value(true) }
-                jsonPath("$.feedback") { value(CONGRATULATIONS) }
-            }
-    }
-
-    @TestFactory
-    fun `Solving initial quiz returns Bad request with`() = listOf(
-        "",
-        "a=2",
-    ).map { requestParam ->
-        dynamicTest("request param: $requestParam") {
-            mockMvc.post("$API_PATH/quiz?$requestParam") {
-                with(httpBasic(USERNAME, PASSWORD))
-            }
-                .andExpectAll {
-                    status { isBadRequest() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.error") { value(containsString("parameter")) }
-                    jsonPath("$.error") { value(containsString("answer")) }
-                }
-        }
-    }
-
-    @Test
     fun `Adding quiz returns OK with created quiz`() {
         mockMvc.post("$API_PATH/quizzes") {
             contentType = MediaType.APPLICATION_JSON

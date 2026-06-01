@@ -12,26 +12,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class QuizEngineController @Autowired constructor(private val quizService: QuizService) {
-    @GetMapping("/quiz")
-    fun getInitialQuiz(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<QuizOutDto> {
-        val quiz = quizService.getInitialQuiz(userDetails)
-
-        return ResponseEntity
-            .ok()
-            .body(quiz.toDto())
-    }
-
-    @PostMapping("/quiz")
-    fun solveInitialQuiz(
-        @RequestParam answer: Int,
-        @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<ResultDto> {
-        val result = quizService.solveInitialQuiz(answer = answer, userDetails)
-
-        return ResponseEntity
-            .ok()
-            .body(result.toDto())
-    }
 
     @PostMapping("/quizzes")
     fun addQuiz(

@@ -3,7 +3,6 @@ package engine
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -82,31 +81,6 @@ class QuizServiceTest @Autowired constructor(
         email = "vanya@mail.com",
         password = "12345"
     )
-
-    @Test
-    fun `Gets initial quiz`() {
-        val actualQuiz = sut.getInitialQuiz(userDetails)
-
-        assertAll(
-            { assertEquals(newQuiz1.title, actualQuiz.title) },
-            { assertEquals(newQuiz1.text, actualQuiz.text) },
-            { assertEquals(newQuiz1.options, actualQuiz.options) },
-            { assertEquals(newQuiz1.answer, actualQuiz.answer) },
-            { assertEquals(user.username, actualQuiz.authorUsername) }
-        )
-    }
-
-    @TestFactory
-    fun `Solves initial quiz with`() = listOf(
-        2 to AnswerResult(success = true, feedback = CONGRATULATIONS),
-        1 to AnswerResult(success = false, feedback = WRONG_ANSWER),
-    ).map { (answerIdx, expected) ->
-        dynamicTest("answer $answerIdx is ${expected.success}") {
-            val actual = sut.solveInitialQuiz(answer = answerIdx, userDetails = userDetails)
-
-            assertEquals(expected, actual)
-        }
-    }
 
     @Test
     fun `Adds a quiz`() {

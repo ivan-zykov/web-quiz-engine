@@ -27,20 +27,6 @@ class QuizService @Autowired constructor(
     private val passwordEncoder: PasswordEncoder,
     private val clock: Clock,
 ) {
-    fun getInitialQuiz(userDetails: UserDetails): Quiz = addInitialQuiz(userDetails)
-
-    fun solveInitialQuiz(answer: Int, userDetails: UserDetails): AnswerResult {
-        val initialQuiz = addInitialQuiz(userDetails)
-
-        val answerWrapped = Answer(listOf(answer))
-        val (success, feedback) = initialQuiz.check(answerWrapped)
-
-        return AnswerResult(
-            success = success,
-            feedback = feedback,
-        )
-    }
-
     fun addQuiz(newQuiz: NewQuiz, userDetails: UserDetails): Quiz {
         val user = userRepo.findByUsername(userDetails.username)
             ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
@@ -154,16 +140,6 @@ class QuizService @Autowired constructor(
         return completionRepo.findByUserOrderByCompletedAtDescIdAsc(user, pageWithMaxTen)
             .map { it.toDomain() }
     }
-
-    private fun addInitialQuiz(userDetails: UserDetails) = addQuiz(
-        NewQuiz(
-            title = "The Java Logo",
-            text = "What is depicted on the Java logo?",
-            options = listOf("Robot", "Tea leaf", "Cup of coffee", "Bug"),
-            answer = listOf(2),
-        ),
-        userDetails
-    )
 }
 
 private fun Quiz.check(answer: Answer) =
