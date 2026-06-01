@@ -25,11 +25,11 @@ The application follows a layered architecture separating web, business logic, a
 - Unit and integration tests (no mocking)
 - Basic HTTP authentication
 - New user registration with custom user store
+- Pagination
 
 ## Requirements
 
-- Java 23. This version is required by the Hyperskill course checks and project setup. Higher versions not tested
-- Local Gradle. Wrapper is not included due to Hyperskill submodule structure
+- Java 23. Higher versions not tested.
 
 ## Run
 
@@ -54,9 +54,10 @@ http://localhost:8889
 - POST /api/register — register a new user
 - POST /api/quizzes — create a quiz
 - GET /api/quizzes/{id} — retrieve a quiz
-- GET /api/quizzes — retrieve all quiz
+- GET /api/quizzes — retrieve all quiz, paginated
 - POST /api/quizzes/{id}/solve — submit an answer
-- DELETE /api/quizzes/{id} - delete a quiz
+- DELETE /api/quizzes/{id} — delete a quiz
+- GET /api/quizzes/completed — get all quiz completions for the user, paginated
 
 ## Future improvements
 
@@ -64,9 +65,3 @@ http://localhost:8889
 - Specify authorization for each /api/** endpoint explicitly
 - Replace H2 with PostgreSQL for production-like persistence
 - Align project structure with standard Gradle conventions
-
-## Notes
-
-- Under development as part of an ongoing Hyperskill course.
-- Implemented as a submodule inside a larger Hyperskill project, so the file structure is constrained and differs from standard Gradle layouts.
-- Some files (e.g. `root-build-backup.txt`) are intentionally kept to restore the original root `build.gradle` required by Hyperskill.
