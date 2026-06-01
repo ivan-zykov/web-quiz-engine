@@ -10,7 +10,7 @@ data class NewQuiz(
 )
 
 @JvmInline
-value class QuizId(val value: Int)
+value class QuizId(val value: Long)
 
 data class Quiz(
     val title: String,

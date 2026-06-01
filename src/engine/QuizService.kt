@@ -38,7 +38,7 @@ class QuizService @Autowired constructor(
 
     @Transactional(readOnly = true)
     fun getQuizBy(id: QuizId): Quiz =
-        jpaQuizRepo.findById(id.value.toLong())
+        jpaQuizRepo.findById(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
             .toDomain()
 
@@ -55,7 +55,7 @@ class QuizService @Autowired constructor(
         answer: Answer,
         userDetails: UserDetails
     ): AnswerResult {
-        val quizEntity = jpaQuizRepo.findById(id.value.toLong())
+        val quizEntity = jpaQuizRepo.findById(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
         val quiz = quizEntity.toDomain()
 
@@ -95,7 +95,7 @@ class QuizService @Autowired constructor(
         id: QuizId,
         userDetails: UserDetails
     ) {
-        val quizEntity = jpaQuizRepo.findById(id.value.toLong())
+        val quizEntity = jpaQuizRepo.findById(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
         val quiz = quizEntity.toDomain()
 
@@ -109,7 +109,7 @@ class QuizService @Autowired constructor(
             .map { it.toDomain() }
         completions.forEach { completionRepo.deleteById(it.id) }
 
-        jpaQuizRepo.deleteById(id.value.toLong())
+        jpaQuizRepo.deleteById(id.value)
     }
 
     @Transactional(readOnly = true)
@@ -120,7 +120,7 @@ class QuizService @Autowired constructor(
             Sort.by("completedAt").descending()
         )
 
-        val quizEntity: QuizEntity = jpaQuizRepo.findById(id.value.toLong())
+        val quizEntity: QuizEntity = jpaQuizRepo.findById(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
 
         return completionRepo.findByQuiz(quizEntity, pageWithMaxTenSortedByCompletionDesc)
@@ -167,7 +167,7 @@ private fun QuizEntity.toDomain() = Quiz(
     text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
     options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
     answer = this.answers,
-    id = QuizId(requireNotNull(this.id?.toInt()) { "Error. QuizEntity.id must not be null" }),
+    id = QuizId(requireNotNull(this.id) { "Error. QuizEntity.id must not be null" }),
     authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" },
 )
 

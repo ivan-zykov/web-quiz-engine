@@ -217,7 +217,7 @@ class QuizServiceTest @Autowired constructor(
 
     @Test
     fun `Solving non-existing quiz throws`() {
-        val quizId = 1
+        val quizId = 1L
 
         val exception = assertThrows<QuizNotFoundException> {
             sut.solveQuizBy(id = QuizId(quizId), answer = Answer(listOf()), userDetails = userDetails)
@@ -292,7 +292,7 @@ class QuizServiceTest @Autowired constructor(
     @Test
     fun `Getting completions by non-existing quiz throws`() {
         assertThrows<QuizNotFoundException> {
-            sut.getTenCompletionsPaginatedSortedDescBy(QuizId(99), 1)
+            sut.getTenCompletionsPaginatedSortedDescBy(QuizId(99L), 1)
         }
     }
 

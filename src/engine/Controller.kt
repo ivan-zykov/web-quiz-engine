@@ -107,13 +107,13 @@ private fun QuizInDto.toNewQuiz() = NewQuiz(
 )
 
 private fun Quiz.toDto() = QuizOutDto(
-    id = id,
-    title = title,
-    text = text,
-    options = options,
+    id = this.id,
+    title = this.title,
+    text = this.text,
+    options = this.options,
 )
 
 private fun CompletionOfQuiz.toDto() = CompletionOfQuizDto(
-    id = this.quiz.id.value.toLong(),
+    id = this.quiz.id.value,
     completedAt = this.completedAt
 )
