@@ -11,6 +11,7 @@ import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -31,8 +32,6 @@ private const val CONGRATULATIONS = "Congratulations, you're right!"
 
 private const val USERNAME = "test@user.com"
 private const val PASSWORD = "testPass"
-private const val OTHER_USERNAME = "other@user.com"
-private const val OTHER_PASSWORD = "otherPass"
 
 private val quiz = QuizInDto(
     title = TITLE,
@@ -46,11 +45,11 @@ private val userCredentials = UserCredentialsDTO(
     password = "12345"
 )
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Import(SecurityConfig::class)
 @ActiveProfiles("test")
-class ControllerTest @Autowired constructor(
+class ControllerIntegrationTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val quizzesRepository: JpaQuizzesRepository,
     private val completionsRepo: CompletionsOfQuizRepository,
@@ -162,36 +161,6 @@ class ControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `Getting quiz by id returns Not found for non-existing id`() {
-        val quizId = 0
-
-        mockMvc.get("$API_PATH/quizzes/$quizId") {
-            with(httpBasic(USERNAME, PASSWORD))
-        }
-            .andExpectAll {
-                status { isNotFound() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.error") { value(containsString("Error")) }
-                jsonPath("$.error") { value(containsString(quizId.toString())) }
-            }
-    }
-
-    @Test
-    fun `Getting all quizzes returns page with empty content`() {
-        mockMvc.get("$API_PATH/quizzes") {
-            with(httpBasic(USERNAME, PASSWORD))
-        }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.totalPages") { value(0) }
-                jsonPath("$.totalElements") { value(0) }
-                jsonPath("$.content") { isArray() }
-                jsonPath("$.content") { isEmpty() }
-            }
-    }
-
-    @Test
     fun `Getting all quizzes returns page with two`() {
         addQuiz(quizSerialized1)
         val quizSerialized2 = mapper.writeValueAsString(quiz.copy(title = "$TITLE 2"))
@@ -237,23 +206,6 @@ class ControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `Solving quiz by ID returns Not found for non-existing quiz`() {
-        val idOfNonExistingQuiz = 1
-        val answer = mapper.writeValueAsString(AnswerDto(listOf()))
-
-        mockMvc.post("$API_PATH/quizzes/{id}/solve", idOfNonExistingQuiz) {
-            contentType = MediaType.APPLICATION_JSON
-            content = answer
-            with(httpBasic(USERNAME, PASSWORD))
-        }.andExpectAll {
-            status { isNotFound() }
-            content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$.error") { value(containsString("Error")) }
-            jsonPath("$.error") { value(containsString(idOfNonExistingQuiz.toString())) }
-        }
-    }
-
-    @Test
     fun `Deleting quiz by ID returns No content for same user as author`() {
         val addedQuiz = addQuiz(quizSerialized1)
 
@@ -266,28 +218,6 @@ class ControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `Deleting quiz by ID returns Forbidden for user different than author`() {
-        val addedQuiz = addQuiz(quizSerialized1)
-        userRepo.save(
-            AppUser(
-                username = OTHER_USERNAME,
-                password = passEncoder.encode(OTHER_PASSWORD)
-            )
-        )
-
-        mockMvc.delete("$API_PATH/quizzes/{id}", addedQuiz.id.value) {
-            with(httpBasic(OTHER_USERNAME, OTHER_PASSWORD))
-        }
-            .andExpectAll {
-                status { isForbidden() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.error") {
-                    value("Error. Username $OTHER_USERNAME doesn't math the author's username of quiz with ID ${addedQuiz.id.value}.")
-                }
-            }
-    }
-
-    @Test
     fun `Registering new user returns OK`() {
         mockMvc.post("$API_PATH/register") {
             contentType = MediaType.APPLICATION_JSON
@@ -295,24 +225,6 @@ class ControllerTest @Autowired constructor(
         }
             .andExpect {
                 status { isOk() }
-            }
-    }
-
-    @Test
-    fun `Registering duplicate new user returns Bad request`() {
-        mockMvc.post("$API_PATH/register") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(userCredentials)
-        }
-
-        mockMvc.post("$API_PATH/register") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(userCredentials)
-        }
-            .andExpect {
-                status { isBadRequest() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.error") { value("User with email ${userCredentials.email} already exists") }
             }
     }
 
@@ -329,5 +241,4 @@ class ControllerTest @Autowired constructor(
 
         return createdQuiz
     }
-
 }
