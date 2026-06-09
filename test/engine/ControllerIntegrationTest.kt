@@ -1,26 +1,28 @@
 package engine
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import org.hamcrest.Matchers.containsString
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.context.annotation.Import
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import kotlin.apply
 
 private const val API_PATH = "/api"
 
@@ -33,10 +35,11 @@ private const val CONGRATULATIONS = "Congratulations, you're right!"
 private const val USERNAME = "test@user.com"
 private const val PASSWORD = "testPass"
 
+var options = listOf(OPTION, OPTION)
 private val quiz = QuizInDto(
     title = TITLE,
     text = TEXT,
-    options = listOf(OPTION, OPTION),
+    options = options,
     answer = listOf(0),
 )
 
@@ -46,19 +49,16 @@ private val userCredentials = UserCredentialsDTO(
 )
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 @Import(SecurityConfig::class)
 @ActiveProfiles("test")
 class ControllerIntegrationTest @Autowired constructor(
-    private val mockMvc: MockMvc,
+    private val restTemplate: TestRestTemplate,
     private val quizzesRepository: JpaQuizzesRepository,
     private val completionsRepo: CompletionsOfQuizRepository,
     private val mapper: ObjectMapper,
     private val userRepo: AppUserRepository,
     private val passEncoder: PasswordEncoder,
 ) {
-    private val quizSerialized1: String = mapper.writeValueAsString(quiz)
-
     @BeforeEach
     fun reset() {
         completionsRepo.deleteAll()
@@ -78,20 +78,21 @@ class ControllerIntegrationTest @Autowired constructor(
 
     @Test
     fun `Adding quiz returns OK with created quiz`() {
-        mockMvc.post("$API_PATH/quizzes") {
-            contentType = MediaType.APPLICATION_JSON
-            content = quizSerialized1
-            with(httpBasic(USERNAME, PASSWORD))
+        val headers = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.id") { isNumber() }
-                jsonPath("$.title") { TITLE }
-                jsonPath("$.text") { TEXT }
-                jsonPath("$.options[0]") { OPTION }
-                jsonPath("$.answer") { doesNotExist() }
-            }
+        val request = HttpEntity(quiz, headers)
+
+        val response = restTemplate.postForEntity<QuizOutDto>("$API_PATH/quizzes", request)
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body?.id).isNotNull },
+            { assertThat(response.body?.title).isEqualTo(quiz.title) },
+            { assertThat(response.body?.options).isEqualTo(quiz.options) },
+        )
     }
 
     @TestFactory
@@ -130,115 +131,172 @@ class ControllerIntegrationTest @Autowired constructor(
         )
     }.map { (displayName, body, errorMessageSubstring) ->
         dynamicTest(displayName) {
-            mockMvc.post("$API_PATH/quizzes") {
-                contentType = MediaType.APPLICATION_JSON
-                content = body
-                with(httpBasic(USERNAME, PASSWORD))
+            val headers = HttpHeaders().apply {
+                this.contentType = MediaType.APPLICATION_JSON
+                this.setBasicAuth(USERNAME, PASSWORD)
             }
-                .andExpectAll {
-                    status { isBadRequest() }
-                    jsonPath("$.error") { value(containsString(errorMessageSubstring)) }
-                }
+            val request = HttpEntity(body, headers)
+            val response = restTemplate.postForEntity<Map<String, String>>(
+                "$API_PATH/quizzes",
+                request
+            )
+
+            assertAll(
+                { assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST) },
+                { assertThat(response.body?.get("error")).contains(errorMessageSubstring) }
+            )
         }
     }
 
     @Test
     fun `Getting quiz by id returns OK with one quiz`() {
-        val addedQuizId = addQuiz(quizSerialized1).id.value
-
-        mockMvc.get("$API_PATH/quizzes/${addedQuizId}") {
-            with(httpBasic(USERNAME, PASSWORD))
+        val addedQuizId = addQuizNew(quiz).id.value
+        val headers = HttpHeaders().apply {
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.id") { isNumber() }
-                jsonPath("$.title") { value(TITLE) }
-                jsonPath("$.text") { value(TEXT) }
-                jsonPath("$.options[0]") { value(OPTION) }
-                jsonPath("$.answer") { doesNotExist() }
-            }
+        val request = HttpEntity<Void>(headers)
+
+        val response = restTemplate.exchange(
+            "$API_PATH/quizzes/${addedQuizId}",
+            HttpMethod.GET,
+            request,
+            object : ParameterizedTypeReference<Map<String, Any>>() {}
+        )
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body).containsEntry("id", addedQuizId.toInt()) },
+            { assertThat(response.body).containsEntry("title", TITLE) },
+            { assertThat(response.body).containsEntry("text", TEXT) },
+            { assertThat(response.body).containsEntry("options", options) },
+            { assertThat(response.body).doesNotContainKey("answer") }
+        )
     }
 
     @Test
     fun `Getting all quizzes returns page with two`() {
-        addQuiz(quizSerialized1)
-        val quizSerialized2 = mapper.writeValueAsString(quiz.copy(title = "$TITLE 2"))
-        addQuiz(quizSerialized2)
-
-        mockMvc.get("$API_PATH/quizzes") {
-            with(httpBasic(USERNAME, PASSWORD))
+        addQuizNew(quiz)
+        val title2 = "$TITLE 2"
+        addQuizNew(quiz.copy(title = title2))
+        val headers = HttpHeaders().apply {
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.totalPages") { value(1) }
-                jsonPath("$.totalElements") { value(2) }
-                jsonPath("$.content[0].id") { isNumber() }
-                jsonPath("$.content[0].title") { value(quiz.title) }
-                jsonPath("$.content[0].text") { value(TEXT) }
-                jsonPath("$.content[0].options[0]") { value(OPTION) }
-                jsonPath("$.content[1].id") { isNumber() }
-                jsonPath("$.content[1].title") { containsString(TITLE) }
-                jsonPath("$.content[1].text") { value(TEXT) }
-                jsonPath("$.content[1].options[0]") { value(OPTION) }
-            }
+        val request = HttpEntity<Void>(headers)
+
+        val response = restTemplate.exchange(
+            "$API_PATH/quizzes",
+            HttpMethod.GET,
+            request,
+            object : ParameterizedTypeReference<PageResponse<QuizOutDto>>() {}
+        )
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body?.totalPages).isEqualTo(1) },
+            { assertThat(response.body?.totalElements).isEqualTo(2) },
+            { assertThat(response.body?.content[0]?.id).isNotNull },
+            { assertThat(response.body?.content[1]?.id).isNotNull },
+            { assertThat(response.body?.content[0]?.title).isEqualTo(TITLE) },
+            { assertThat(response.body?.content[1]?.title).isEqualTo(title2) },
+            { assertThat(response.body?.content[0]?.text).isEqualTo(TEXT) },
+            { assertThat(response.body?.content[1]?.text).isEqualTo(TEXT) },
+            { assertThat(response.body?.content[0]?.options).isEqualTo(options) },
+            { assertThat(response.body?.content[1]?.options).isEqualTo(options) }
+        )
     }
 
     @Test
     fun `Solving quiz by ID returns OK`() {
-        val addedQuiz = addQuiz(quizSerialized1)
-        val idOfAddedQuiz = addedQuiz.id.value
-        val answer = mapper.writeValueAsString(AnswerDto(listOf(0)))
-            ?: fail { "Failed to serialize answer" }
-
-        mockMvc.post("$API_PATH/quizzes/{id}/solve", idOfAddedQuiz) {
-            contentType = MediaType.APPLICATION_JSON
-            content = answer
-            with(httpBasic(USERNAME, PASSWORD))
+        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val headers = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpectAll {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.success") { value(true) }
-                jsonPath("$.feedback") { value(CONGRATULATIONS) }
-            }
+        val answer = AnswerDto(listOf(0))
+        val request = HttpEntity(answer, headers)
+
+        val response = restTemplate.postForEntity<ResultDto>(
+            "$API_PATH/quizzes/$idOfAddedQuiz/solve",
+            request
+        )
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body?.success).isTrue },
+            { assertThat(response.body?.feedback).isEqualTo(CONGRATULATIONS) }
+        )
     }
 
     @Test
     fun `Deleting quiz by ID returns No content for same user as author`() {
-        val addedQuiz = addQuiz(quizSerialized1)
-
-        mockMvc.delete("$API_PATH/quizzes/{id}", addedQuiz.id.value) {
-            with(httpBasic(USERNAME, PASSWORD))
+        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val headers = HttpHeaders().apply {
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpect {
-                status { isNoContent() }
-            }
+        val request = HttpEntity<Void>(headers)
+
+        val response = restTemplate.exchange(
+            "$API_PATH/quizzes/$idOfAddedQuiz",
+            HttpMethod.DELETE,
+            request,
+            object : ParameterizedTypeReference<Void>() {}
+        )
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.NO_CONTENT) },
+            { assertThat(quizzesRepository.findById(idOfAddedQuiz).isEmpty) }
+        )
     }
 
     @Test
     fun `Registering new user returns OK`() {
-        mockMvc.post("$API_PATH/register") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(userCredentials)
+        val headers = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andExpect {
-                status { isOk() }
-            }
+        val request = HttpEntity(userCredentials, headers)
+
+        val response = restTemplate.postForEntity<Void>(
+            "$API_PATH/register",
+            request
+        )
+
+        val registeredUser = userRepo.findByUsername(userCredentials.email)
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(registeredUser?.username).isEqualTo(userCredentials.email) },
+            {
+                assertThat(
+                    passEncoder.matches(
+                        userCredentials.password,
+                        registeredUser?.password
+                    )
+                ).isTrue
+            },
+        )
     }
 
-    private fun addQuiz(quizSerialized: String): QuizOutDto {
-        val result = mockMvc.post("$API_PATH/quizzes") {
-            contentType = MediaType.APPLICATION_JSON
-            content = quizSerialized
-            with(httpBasic(USERNAME, PASSWORD))
+    private fun addQuizNew(quizInDto: QuizInDto): QuizOutDto {
+        val headers = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
+            this.setBasicAuth(USERNAME, PASSWORD)
         }
-            .andReturn()
+        val request = HttpEntity(quizInDto, headers)
+        val response = restTemplate.postForEntity<QuizOutDto>(
+            "$API_PATH/quizzes",
+            request
+        )
+        val addedQuiz = response.body ?: fail { "Error. Failed to add quiz $quizInDto" }
 
-        val createdQuiz: QuizOutDto? = mapper.readValue(result.response.contentAsByteArray)
-        checkNotNull(createdQuiz) { "Error. Failed to add quiz $quizSerialized" }
-
-        return createdQuiz
+        return addedQuiz
     }
+
+    private class PageResponse<T>(
+        val content: List<T>,
+        val totalPages: Int,
+        val totalElements: Long,
+    )
 }
