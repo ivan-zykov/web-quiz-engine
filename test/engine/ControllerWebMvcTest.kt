@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -100,6 +101,7 @@ class ControllerWebMvcTest @Autowired constructor(
     }
 
     @Test
+    @WithAnonymousUser
     fun `Registering duplicate new user returns Bad request`() {
         every { quizService.registerNewUser(any()) }
             .throws(DuplicatedUserException("User with this email already exists"))
