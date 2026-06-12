@@ -91,6 +91,7 @@ class ControllerIntegrationTest @Autowired constructor(
             { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
             { assertThat(response.body?.id).isNotNull },
             { assertThat(response.body?.title).isEqualTo(quiz.title) },
+            { assertThat(response.body?.text).isEqualTo(quiz.text) },
             { assertThat(response.body?.options).isEqualTo(quiz.options) },
         )
     }
@@ -255,7 +256,6 @@ class ControllerIntegrationTest @Autowired constructor(
     fun `Registering new user returns OK`() {
         val headers = HttpHeaders().apply {
             this.contentType = MediaType.APPLICATION_JSON
-            this.setBasicAuth(USERNAME, PASSWORD)
         }
         val request = HttpEntity(userCredentials, headers)
 
