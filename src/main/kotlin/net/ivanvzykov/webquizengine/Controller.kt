@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired

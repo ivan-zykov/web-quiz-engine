@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

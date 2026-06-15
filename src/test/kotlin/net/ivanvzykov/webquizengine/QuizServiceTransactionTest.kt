@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import com.ninjasquad.springmockk.MockkSpyBean
 import io.mockk.every

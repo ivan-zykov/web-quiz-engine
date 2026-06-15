@@ -27,26 +27,6 @@ repositories {
     mavenCentral()
 }
 
-// Hyperskill uses non-standard structure of this sub-module
-sourceSets {
-    main {
-        java {
-            setSrcDirs(['src'])
-            exclude 'resources/**'
-            exclude 'build/**'
-        }
-        resources {
-            setSrcDirs(['src/resources'])
-        }
-    }
-    test {
-        java {
-            setSrcDirs(['test'])
-            exclude 'build/**'
-        }
-    }
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

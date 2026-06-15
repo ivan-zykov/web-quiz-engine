@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

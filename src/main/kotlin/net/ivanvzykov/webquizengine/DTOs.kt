@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank

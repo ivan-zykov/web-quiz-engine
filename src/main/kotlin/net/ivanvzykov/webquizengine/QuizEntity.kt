@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Fetch

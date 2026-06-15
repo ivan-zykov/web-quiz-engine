@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import java.time.LocalDateTime
 

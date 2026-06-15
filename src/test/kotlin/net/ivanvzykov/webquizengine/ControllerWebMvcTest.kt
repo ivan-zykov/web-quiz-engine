@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean

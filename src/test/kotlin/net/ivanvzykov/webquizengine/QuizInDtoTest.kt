@@ -1,4 +1,4 @@
-package engine
+package net.ivanvzykov.webquizengine
 
 import jakarta.validation.Validation
 import jakarta.validation.Validator
