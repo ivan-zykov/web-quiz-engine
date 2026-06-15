@@ -22,7 +22,7 @@ The application follows a layered architecture separating web, business logic, a
 - Input validation using Spring validation
 - Centralized exception handling
 - Separation of domain models, DTOs and persistence entities
-- Unit and integration tests (no mocking)
+- Unit and integration tests
 - Basic HTTP authentication
 - New user registration with custom user store
 - Pagination
@@ -64,4 +64,3 @@ http://localhost:8889
 - Handle authentication exceptions
 - Specify authorization for each /api/** endpoint explicitly
 - Replace H2 with PostgreSQL for production-like persistence
-- Align project structure with standard Gradle conventions
