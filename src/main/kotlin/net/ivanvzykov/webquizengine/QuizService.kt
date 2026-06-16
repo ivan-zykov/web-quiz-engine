@@ -51,7 +51,7 @@ class QuizService @Autowired constructor(
         )
 
         return jpaQuizRepo.findAll(pageWithMaxTenQuizzes)
-            .map { it?.toDomain() }
+            .map { it.toDomain() }
     }
 
     fun solveQuizBy(
@@ -87,9 +87,11 @@ class QuizService @Autowired constructor(
         if (existingUser != null) {
             throw DuplicatedUserException("User with email ${credentials.email} already exists")
         }
+        val passwordEncoded = passwordEncoder.encode(credentials.password)
+            ?: throw IllegalStateException("Failed to encode user's password")
         val newUser = AppUser(
             username = credentials.email,
-            password = passwordEncoder.encode(credentials.password)
+            password = passwordEncoded
         )
         userRepo.save(newUser)
     }
@@ -103,7 +105,7 @@ class QuizService @Autowired constructor(
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
         val quiz = quizEntity.toDomain()
 
-        if (userDetails.username.equals(quiz.authorUsername).not()) {
+        if (userDetails.username != quiz.authorUsername) {
             throw AccessDeniedException(
                 "Error. Username ${userDetails.username} doesn't math the author's username of quiz with ID ${id.value}."
             )

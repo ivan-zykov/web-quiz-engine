@@ -1,6 +1,5 @@
 package net.ivanvzykov.webquizengine
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -9,10 +8,11 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
+import org.springframework.boot.resttestclient.postForEntity
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.context.annotation.Import
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
+import tools.jackson.databind.ObjectMapper
 import kotlin.apply
 
 private const val API_PATH = "/api"
@@ -50,6 +51,7 @@ private val userCredentials = UserCredentialsDTO(
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(SecurityConfig::class)
+@AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 class ControllerIntegrationTest @Autowired constructor(
     private val restTemplate: TestRestTemplate,
@@ -67,10 +69,12 @@ class ControllerIntegrationTest @Autowired constructor(
         userRepo.deleteAll()
         val userId = 0
         if (!userRepo.existsById(userId)) {
+            val passwordEncoded = passEncoder.encode(PASSWORD)
+                ?: throw IllegalStateException("Failed to encode user's password")
             val user = AppUser(
                 id = userId,
                 username = USERNAME,
-                password = passEncoder.encode(PASSWORD)
+                password = passwordEncoded
             )
             userRepo.save(user)
         }

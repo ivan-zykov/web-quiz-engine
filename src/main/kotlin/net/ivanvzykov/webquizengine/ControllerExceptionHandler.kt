@@ -49,7 +49,7 @@ class ControllerExceptionHandler : ResponseEntityExceptionHandler() {
     ): ResponseEntity<in Any>? {
         val errorMessages: List<String> = buildList {
             ex.bindingResult.allErrors.forEach { error ->
-                error?.defaultMessage?.let { add(it) }
+                error.defaultMessage?.let { add(it) }
             }
         }
         val body: ErrorBody = mapOf(
@@ -63,28 +63,35 @@ class ControllerExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleMethodArgumentTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorBody> {
         val body = makeErrorBodyFor(ex)
 
-        return ResponseEntity<ErrorBody>(body, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(QuizNotFoundException::class)
     fun handleQuizNotFound(exception: QuizNotFoundException): ResponseEntity<ErrorBody> {
         val body = makeErrorBodyFor(exception)
 
-        return ResponseEntity<ErrorBody>(body, HttpStatus.NOT_FOUND)
+        return ResponseEntity(body, HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(DuplicatedUserException::class)
     fun handleDuplicatedUser(exception: DuplicatedUserException): ResponseEntity<ErrorBody> {
         val body = makeErrorBodyFor(exception)
 
-        return ResponseEntity<ErrorBody>(body, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDenied(exception: AccessDeniedException): ResponseEntity<ErrorBody> {
         val body = makeErrorBodyFor(exception)
 
-        return ResponseEntity<ErrorBody>(body, HttpStatus.FORBIDDEN)
+        return ResponseEntity(body, HttpStatus.FORBIDDEN)
+    }
+
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleAccessDenied(exception: IllegalStateException): ResponseEntity<ErrorBody> {
+        val body = makeErrorBodyFor(exception)
+
+        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     private fun makeErrorBodyFor(ex: Exception): ErrorBody =

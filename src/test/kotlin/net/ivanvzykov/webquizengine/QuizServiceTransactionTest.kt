@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -51,10 +51,12 @@ class QuizServiceTransactionTest @Autowired constructor(
     @BeforeEach
     fun setUp() {
         if (userRepo.findByUsername(USERNAME) == null) {
+            val passwordEncoded = passwordEncoder.encode(PASSWORD)
+                ?: throw IllegalStateException("Failed to encode user's password")
             userRepo.save(
                 AppUser(
                     username = USERNAME,
-                    password = passwordEncoder.encode(PASSWORD),
+                    password = passwordEncoded,
                 )
             )
         }
@@ -79,7 +81,7 @@ class QuizServiceTransactionTest @Autowired constructor(
             sut.deleteQuizBy(id = quiz.id, userDetails = userDetails)
         }
 
-        val persistedQuiz = quizRepo.findById(quiz.id.value.toLong())
+        val persistedQuiz = quizRepo.findById(quiz.id.value)
 
         assertTrue(persistedQuiz.isPresent)
         assertEquals(1, completionRepo.findAll().size)
