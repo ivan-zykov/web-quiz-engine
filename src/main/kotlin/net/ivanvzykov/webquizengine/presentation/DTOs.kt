@@ -1,9 +1,10 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.presentation
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import net.ivanvzykov.webquizengine.application.QuizId
 import java.time.LocalDateTime
 
 class QuizOutDto(

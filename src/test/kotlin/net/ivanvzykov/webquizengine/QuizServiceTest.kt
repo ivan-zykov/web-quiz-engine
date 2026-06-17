@@ -1,5 +1,20 @@
 package net.ivanvzykov.webquizengine
 
+import net.ivanvzykov.webquizengine.application.Answer
+import net.ivanvzykov.webquizengine.application.AnswerResult
+import net.ivanvzykov.webquizengine.application.DuplicatedUserException
+import net.ivanvzykov.webquizengine.application.NewQuiz
+import net.ivanvzykov.webquizengine.config.PasswordEncoderConfig
+import net.ivanvzykov.webquizengine.application.QuizId
+import net.ivanvzykov.webquizengine.application.QuizNotFoundException
+import net.ivanvzykov.webquizengine.application.QuizService
+import net.ivanvzykov.webquizengine.application.UserCredentials
+import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.application.AppUserAdapter
+import net.ivanvzykov.webquizengine.persistence.AppUserRepository
+import net.ivanvzykov.webquizengine.persistence.CompletionOfQuizEntity
+import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
+import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

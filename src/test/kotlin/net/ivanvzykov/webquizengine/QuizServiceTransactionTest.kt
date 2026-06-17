@@ -2,6 +2,16 @@ package net.ivanvzykov.webquizengine
 
 import com.ninjasquad.springmockk.MockkSpyBean
 import io.mockk.every
+import net.ivanvzykov.webquizengine.application.Answer
+import net.ivanvzykov.webquizengine.config.ClockConfig
+import net.ivanvzykov.webquizengine.application.NewQuiz
+import net.ivanvzykov.webquizengine.config.PasswordEncoderConfig
+import net.ivanvzykov.webquizengine.application.QuizService
+import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.application.AppUserAdapter
+import net.ivanvzykov.webquizengine.persistence.AppUserRepository
+import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
+import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

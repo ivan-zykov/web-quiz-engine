@@ -1,4 +1,4 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

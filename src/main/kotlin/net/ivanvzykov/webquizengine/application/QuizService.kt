@@ -1,5 +1,11 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.application
 
+import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserRepository
+import net.ivanvzykov.webquizengine.persistence.CompletionOfQuizEntity
+import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
+import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
+import net.ivanvzykov.webquizengine.persistence.QuizEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest

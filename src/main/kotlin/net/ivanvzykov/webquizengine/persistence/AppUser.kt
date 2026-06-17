@@ -1,4 +1,4 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.persistence
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

@@ -2,6 +2,15 @@ package net.ivanvzykov.webquizengine
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import net.ivanvzykov.webquizengine.application.DuplicatedUserException
+import net.ivanvzykov.webquizengine.application.Quiz
+import net.ivanvzykov.webquizengine.application.QuizId
+import net.ivanvzykov.webquizengine.application.QuizNotFoundException
+import net.ivanvzykov.webquizengine.application.QuizService
+import net.ivanvzykov.webquizengine.config.SecurityConfig
+import net.ivanvzykov.webquizengine.presentation.AnswerDto
+import net.ivanvzykov.webquizengine.presentation.QuizEngineController
+import net.ivanvzykov.webquizengine.presentation.UserCredentialsDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest

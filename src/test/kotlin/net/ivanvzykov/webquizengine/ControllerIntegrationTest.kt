@@ -1,5 +1,15 @@
 package net.ivanvzykov.webquizengine
 
+import net.ivanvzykov.webquizengine.config.SecurityConfig
+import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserRepository
+import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
+import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
+import net.ivanvzykov.webquizengine.presentation.AnswerDto
+import net.ivanvzykov.webquizengine.presentation.QuizInDto
+import net.ivanvzykov.webquizengine.presentation.QuizOutDto
+import net.ivanvzykov.webquizengine.presentation.ResultDto
+import net.ivanvzykov.webquizengine.presentation.UserCredentialsDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest.dynamicTest

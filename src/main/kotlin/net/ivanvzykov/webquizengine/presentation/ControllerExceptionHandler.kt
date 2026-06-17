@@ -1,5 +1,7 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.presentation
 
+import net.ivanvzykov.webquizengine.application.DuplicatedUserException
+import net.ivanvzykov.webquizengine.application.QuizNotFoundException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode

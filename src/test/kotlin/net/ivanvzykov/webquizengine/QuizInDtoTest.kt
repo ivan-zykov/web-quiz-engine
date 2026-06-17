@@ -2,6 +2,7 @@ package net.ivanvzykov.webquizengine
 
 import jakarta.validation.Validation
 import jakarta.validation.Validator
+import net.ivanvzykov.webquizengine.presentation.QuizInDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll

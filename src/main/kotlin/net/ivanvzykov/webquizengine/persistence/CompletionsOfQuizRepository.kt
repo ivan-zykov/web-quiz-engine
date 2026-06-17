@@ -1,4 +1,4 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.persistence
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

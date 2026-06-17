@@ -1,6 +1,14 @@
-package net.ivanvzykov.webquizengine
+package net.ivanvzykov.webquizengine.presentation
 
 import jakarta.validation.Valid
+import net.ivanvzykov.webquizengine.application.Answer
+import net.ivanvzykov.webquizengine.application.AnswerResult
+import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
+import net.ivanvzykov.webquizengine.application.NewQuiz
+import net.ivanvzykov.webquizengine.application.Quiz
+import net.ivanvzykov.webquizengine.application.QuizId
+import net.ivanvzykov.webquizengine.application.QuizService
+import net.ivanvzykov.webquizengine.application.UserCredentials
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
