@@ -6,6 +6,7 @@ import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
 import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
 import net.ivanvzykov.webquizengine.presentation.AnswerDto
+import net.ivanvzykov.webquizengine.presentation.PageResponseDto
 import net.ivanvzykov.webquizengine.presentation.QuizInDto
 import net.ivanvzykov.webquizengine.presentation.QuizOutDto
 import net.ivanvzykov.webquizengine.presentation.ResultDto
@@ -203,7 +204,7 @@ class ControllerIntegrationTest @Autowired constructor(
             "$API_PATH/quizzes",
             HttpMethod.GET,
             request,
-            object : ParameterizedTypeReference<PageResponse<QuizOutDto>>() {}
+            object : ParameterizedTypeReference<PageResponseDto<QuizOutDto>>() {}
         )
 
         assertAll(
@@ -307,10 +308,4 @@ class ControllerIntegrationTest @Autowired constructor(
 
         return addedQuiz
     }
-
-    private class PageResponse<T>(
-        val content: List<T>,
-        val totalPages: Int,
-        val totalElements: Long,
-    )
 }

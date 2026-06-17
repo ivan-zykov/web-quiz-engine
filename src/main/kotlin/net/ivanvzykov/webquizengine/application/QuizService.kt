@@ -25,6 +25,8 @@ private const val WRONG_ANSWER = "Wrong answer! Please, try again."
 private const val USERNAME_NOT_FOUND_TEMPLATE = "Error. Username %s not found."
 private const val QUIZ_NOT_FOUND_TEMPLATE = "Error. Quiz with ID %s not found."
 
+private const val PAGE_SIZE = 10
+
 @Service
 class QuizService @Autowired constructor(
     private val userRepo: AppUserRepository,
@@ -52,7 +54,7 @@ class QuizService @Autowired constructor(
     fun getAllQuizzesPaginated(pageNumber: Int): Page<Quiz> {
         val pageWithMaxTenQuizzes: Pageable = PageRequest.of(
             pageNumber,
-            10,
+            PAGE_SIZE,
             Sort.by("id").ascending()
         )
 
@@ -128,7 +130,7 @@ class QuizService @Autowired constructor(
     fun getTenCompletionsPaginatedSortedDescBy(id: QuizId, pageNumber: Int): Page<CompletionOfQuiz> {
         val pageWithMaxTenSortedByCompletionDesc: Pageable = PageRequest.of(
             pageNumber,
-            10,
+            PAGE_SIZE,
             Sort.by("completedAt").descending()
         )
 
@@ -147,7 +149,7 @@ class QuizService @Autowired constructor(
         val user = userRepo.findByUsername(userDetails.username)
             ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
 
-        val pageWithMaxTen: Pageable = PageRequest.of(pageNumber, 10)
+        val pageWithMaxTen: Pageable = PageRequest.of(pageNumber, PAGE_SIZE)
 
         return completionRepo.findByUserOrderByCompletedAtDescIdAsc(user, pageWithMaxTen)
             .map { it.toDomain() }

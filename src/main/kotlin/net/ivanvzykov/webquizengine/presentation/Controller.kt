@@ -55,12 +55,12 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
     }
 
     @GetMapping("/quizzes")
-    fun getAllQuizzes(@RequestParam(defaultValue = "0") page: Int): ResponseEntity<Page<QuizOutDto>> {
+    fun getAllQuizzes(@RequestParam(defaultValue = "0") page: Int): ResponseEntity<PageResponseDto<QuizOutDto>> {
         val quizzes = quizService.getAllQuizzesPaginated(page)
 
         return ResponseEntity
             .ok()
-            .body(quizzes.map { it.toDto() })
+            .body(quizzes.toDto { it.toDto() })
     }
 
     @PostMapping("/quizzes/{id}/solve")
@@ -80,13 +80,13 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
     fun getCompletionsBy(
         @RequestParam(defaultValue = "0") page: Int,
         @AuthenticationPrincipal userDetails: UserDetails
-    ): ResponseEntity<Page<CompletionOfQuizDto>> {
+    ): ResponseEntity<PageResponseDto<CompletionOfQuizDto>> {
         val completions =
             quizService.getAllCompletionsPaginatedSortedByCompletedAtDescBy(userDetails, page)
 
         return ResponseEntity
             .ok()
-            .body(completions.map { it.toDto() })
+            .body(completions.toDto { it.toDto() })
     }
 
     @PostMapping("/register")
@@ -124,4 +124,14 @@ private fun Quiz.toDto() = QuizOutDto(
 private fun CompletionOfQuiz.toDto() = CompletionOfQuizDto(
     id = this.quiz.id.value,
     completedAt = this.completedAt
+)
+
+private fun <T : Any, R> Page<T>.toDto(mapper: (T) -> R) = PageResponseDto(
+    content = this.content.map(mapper),
+    number = this.number,
+    size = this.size,
+    totalPages = this.totalPages,
+    totalElements = this.totalElements,
+    first = this.isFirst,
+    last = this.isLast
 )
