@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 
 @Entity
-class AppUser(
+class AppUserEntity(
     @Id @GeneratedValue
     var id: Int = 0,
     var username: String = "",

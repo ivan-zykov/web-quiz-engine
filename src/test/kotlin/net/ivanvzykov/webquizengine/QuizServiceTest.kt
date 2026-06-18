@@ -9,7 +9,7 @@ import net.ivanvzykov.webquizengine.application.QuizId
 import net.ivanvzykov.webquizengine.application.QuizNotFoundException
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
-import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserEntity
 import net.ivanvzykov.webquizengine.application.AppUserAdapter
 import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionOfQuizEntity
@@ -66,18 +66,18 @@ class QuizServiceTest @Autowired constructor(
         clockFixed
     )
 
-    private val user = AppUser(
+    private val user = AppUserEntity(
         id = 1,
         username = USERNAME,
         password = PASSWORD
     )
-    val otherUser = AppUser(
+    val otherUser = AppUserEntity(
         username = "other@user.com",
         password = PASSWORD
     )
     val passwordEncoded = passEncoder.encode(PASSWORD)
         ?: throw IllegalStateException("Failed to encode user's password")
-    private val encodedUser = AppUser(
+    private val encodedUser = AppUserEntity(
         username = USERNAME,
         password = passwordEncoded
     )
@@ -368,7 +368,7 @@ class QuizServiceTest @Autowired constructor(
         val newQuiz2 = newQuiz1.copy(title = "The Java Logo 2")
         val quiz1 = sut.addQuiz(newQuiz1, userDetails)
         val quiz2 = sut.addQuiz(newQuiz2, userDetails)
-        val otherEncodedUser = AppUser(
+        val otherEncodedUser = AppUserEntity(
             username = otherUser.username,
             password = "encoded-${otherUser.password}"
         )

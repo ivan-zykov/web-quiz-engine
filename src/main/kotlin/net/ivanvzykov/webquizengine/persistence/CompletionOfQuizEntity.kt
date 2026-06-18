@@ -24,7 +24,7 @@ class CompletionOfQuizEntity {
 
     @ManyToOne
     @JoinColumn(name = "userCompleted")
-    var user: AppUser? = null
+    var user: AppUserEntity? = null
 
     @Column(name = "completedAt")
     var completedAt: LocalDateTime? = null

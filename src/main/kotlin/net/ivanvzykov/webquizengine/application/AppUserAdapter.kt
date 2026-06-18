@@ -1,10 +1,10 @@
 package net.ivanvzykov.webquizengine.application
 
-import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserEntity
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class AppUserAdapter(private val user: AppUser) : UserDetails {
+class AppUserAdapter(private val user: AppUserEntity) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> = emptyList()
 
     override fun getPassword(): String = requireNotNull(user.password)

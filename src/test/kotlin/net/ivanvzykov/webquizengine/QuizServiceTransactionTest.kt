@@ -7,7 +7,7 @@ import net.ivanvzykov.webquizengine.config.ClockConfig
 import net.ivanvzykov.webquizengine.application.NewQuiz
 import net.ivanvzykov.webquizengine.config.PasswordEncoderConfig
 import net.ivanvzykov.webquizengine.application.QuizService
-import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserEntity
 import net.ivanvzykov.webquizengine.application.AppUserAdapter
 import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
@@ -52,7 +52,7 @@ class QuizServiceTransactionTest @Autowired constructor(
     )
 
     private val userDetails: UserDetails = AppUserAdapter(
-        AppUser(
+        AppUserEntity(
             username = USERNAME,
             password = PASSWORD,
         )
@@ -64,7 +64,7 @@ class QuizServiceTransactionTest @Autowired constructor(
             val passwordEncoded = passwordEncoder.encode(PASSWORD)
                 ?: throw IllegalStateException("Failed to encode user's password")
             userRepo.save(
-                AppUser(
+                AppUserEntity(
                     username = USERNAME,
                     password = passwordEncoded,
                 )

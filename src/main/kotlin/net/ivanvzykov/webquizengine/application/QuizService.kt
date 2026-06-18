@@ -1,6 +1,6 @@
 package net.ivanvzykov.webquizengine.application
 
-import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserEntity
 import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionOfQuizEntity
 import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
@@ -97,7 +97,7 @@ class QuizService @Autowired constructor(
         }
         val passwordEncoded = passwordEncoder.encode(credentials.password)
             ?: throw IllegalStateException("Failed to encode user's password")
-        val newUser = AppUser(
+        val newUser = AppUserEntity(
             username = credentials.email,
             password = passwordEncoded
         )
@@ -165,7 +165,7 @@ private fun Quiz.check(answer: Answer) =
         false to WRONG_ANSWER
     }
 
-private fun NewQuiz.toEntity(user: AppUser): QuizEntity {
+private fun NewQuiz.toEntity(user: AppUserEntity): QuizEntity {
     val entity = QuizEntity()
     entity.title = this.title
     entity.text = this.text

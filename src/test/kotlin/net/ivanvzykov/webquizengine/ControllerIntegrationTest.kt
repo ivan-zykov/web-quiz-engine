@@ -1,7 +1,7 @@
 package net.ivanvzykov.webquizengine
 
 import net.ivanvzykov.webquizengine.config.SecurityConfig
-import net.ivanvzykov.webquizengine.persistence.AppUser
+import net.ivanvzykov.webquizengine.persistence.AppUserEntity
 import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
 import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
@@ -82,7 +82,7 @@ class ControllerIntegrationTest @Autowired constructor(
         if (!userRepo.existsById(userId)) {
             val passwordEncoded = passEncoder.encode(PASSWORD)
                 ?: throw IllegalStateException("Failed to encode user's password")
-            val user = AppUser(
+            val user = AppUserEntity(
                 id = userId,
                 username = USERNAME,
                 password = passwordEncoded
