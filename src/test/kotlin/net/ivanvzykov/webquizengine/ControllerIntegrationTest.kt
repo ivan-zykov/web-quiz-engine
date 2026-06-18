@@ -210,8 +210,12 @@ class ControllerIntegrationTest @Autowired constructor(
         assertAll(
             { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
             { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body?.number).isEqualTo(0) },
+            { assertThat(response.body?.size).isEqualTo(10) },
             { assertThat(response.body?.totalPages).isEqualTo(1) },
             { assertThat(response.body?.totalElements).isEqualTo(2) },
+            { assertThat(response.body?.first).isEqualTo(true) },
+            { assertThat(response.body?.last).isEqualTo(true) },
             { assertThat(response.body?.content[0]?.id).isNotNull },
             { assertThat(response.body?.content[1]?.id).isNotNull },
             { assertThat(response.body?.content[0]?.title).isEqualTo(TITLE) },
