@@ -2,6 +2,7 @@ package net.ivanvzykov.webquizengine
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.DuplicatedUserException
 import net.ivanvzykov.webquizengine.application.Quiz
 import net.ivanvzykov.webquizengine.application.QuizId
@@ -67,10 +68,45 @@ class ControllerWebMvcTest @Autowired constructor(
             .andExpectAll {
                 status { isOk() }
                 content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.number") { value(0) }
+                jsonPath("$.size") { value(10) }
                 jsonPath("$.totalPages") { value(0) }
                 jsonPath("$.totalElements") { value(0) }
+                jsonPath("$.first") { value(true) }
+                jsonPath("$.last") { value(true) }
                 jsonPath("$.content") { isArray() }
                 jsonPath("$.content") { isEmpty() }
+            }
+    }
+
+    @Test
+    fun `Getting completed quizzes returns page with empty content`() {
+        val mockedEmptyPage: Page<CompletionOfQuiz> = Page.empty(PageRequest.of(0, 10))
+        every {
+            quizService.getAllCompletionsPaginatedSortedByCompletedAtDescBy(any(), 0)
+        }.returns(mockedEmptyPage)
+
+        mockMvc.get("$API_PATH/quizzes/completed")
+            .andExpectAll {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.number") { value(0) }
+                jsonPath("$.size") { value(10) }
+                jsonPath("$.totalPages") { value(0) }
+                jsonPath("$.totalElements") { value(0) }
+                jsonPath("$.first") { value(true) }
+                jsonPath("$.last") { value(true) }
+                jsonPath("$.content") { isArray() }
+                jsonPath("$.content") { isEmpty() }
+            }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `Getting completed quizzes returns Unauthorized for anonymous user`() {
+        mockMvc.get("$API_PATH/quizzes/completed")
+            .andExpect {
+                status { isUnauthorized() }
             }
     }
 

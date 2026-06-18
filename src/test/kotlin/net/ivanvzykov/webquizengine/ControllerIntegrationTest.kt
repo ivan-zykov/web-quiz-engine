@@ -6,6 +6,7 @@ import net.ivanvzykov.webquizengine.persistence.AppUserRepository
 import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
 import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
 import net.ivanvzykov.webquizengine.presentation.AnswerDto
+import net.ivanvzykov.webquizengine.presentation.CompletionOfQuizDto
 import net.ivanvzykov.webquizengine.presentation.PageResponseDto
 import net.ivanvzykov.webquizengine.presentation.QuizInDto
 import net.ivanvzykov.webquizengine.presentation.QuizOutDto
@@ -247,6 +248,42 @@ class ControllerIntegrationTest @Autowired constructor(
             { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
             { assertThat(response.body?.success).isTrue },
             { assertThat(response.body?.feedback).isEqualTo(CONGRATULATIONS) }
+        )
+    }
+
+    @Test
+    fun `Getting completed quizzes returns page with one completion`() {
+        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val headers = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
+            this.setBasicAuth(USERNAME, PASSWORD)
+        }
+        val answer = AnswerDto(listOf(0))
+        val request = HttpEntity(answer, headers)
+        restTemplate.postForEntity<ResultDto>(
+            "$API_PATH/quizzes/$idOfAddedQuiz/solve",
+            request
+        )
+
+        val response = restTemplate.exchange(
+            "$API_PATH/quizzes/completed",
+            HttpMethod.GET,
+            HttpEntity<Void>(headers),
+            object : ParameterizedTypeReference<PageResponseDto<CompletionOfQuizDto>>() {}
+        )
+
+        assertAll(
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
+            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.body?.number).isEqualTo(0) },
+            { assertThat(response.body?.size).isEqualTo(10) },
+            { assertThat(response.body?.totalPages).isEqualTo(1) },
+            { assertThat(response.body?.totalElements).isEqualTo(1) },
+            { assertThat(response.body?.first).isTrue },
+            { assertThat(response.body?.last).isTrue },
+            { assertThat(response.body?.content).hasSize(1) },
+            { assertThat(response.body?.content?.first()?.id).isEqualTo(idOfAddedQuiz) },
+            { assertThat(response.body?.content?.first()?.completedAt).isNotNull }
         )
     }
 
