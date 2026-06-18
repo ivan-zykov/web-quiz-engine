@@ -7,15 +7,14 @@ import jakarta.validation.constraints.Size
 import net.ivanvzykov.webquizengine.application.QuizId
 import java.time.LocalDateTime
 
-class QuizOutDto(
+data class QuizOutDto(
     val id: QuizId,
     val title: String,
     val text: String,
     val options: List<String>,
 )
 
-@Suppress("unused")
-class ResultDto(
+data class ResultDto(
     val success: Boolean,
     val feedback: String
 )
@@ -30,9 +29,9 @@ data class QuizInDto(
     val answer: List<Int>?,
 )
 
-class AnswerDto(val answer: List<Int>)
+data class AnswerDto(val answer: List<Int>)
 
-class UserCredentialsDTO(
+data class UserCredentialsDTO(
     @field:NotNull(message = "Field email must be not null")
     @field:Email(regexp = ".+@.+\\..+", message = "Field email must be a valid email")
     val email: String,
@@ -41,12 +40,12 @@ class UserCredentialsDTO(
     val password: String,
 )
 
-class CompletionOfQuizDto(
+data class CompletionOfQuizDto(
     val id: Long,
     val completedAt: LocalDateTime,
 )
 
-class PageResponseDto<T>(
+data class PageResponseDto<T>(
     val content: List<T>,
     val number: Int,
     val size: Int,
