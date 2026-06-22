@@ -22,7 +22,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -34,7 +33,6 @@ private const val API_PATH = "/api"
 @WebMvcTest(QuizEngineController::class)
 @Import(SecurityConfig::class)
 @WithMockUser
-@ActiveProfiles("test")
 class ControllerWebMvcTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val mapper: ObjectMapper,
