@@ -43,7 +43,7 @@ private const val dateTimeString = "2026-01-01T10:00:00Z"
 @DataJpaTest
 @Import(PasswordEncoderConfig::class)
 @ActiveProfiles("test")
-class QuizServiceTest @Autowired constructor(
+class QuizServiceIntegrationTest @Autowired constructor(
     private val userRepo: AppUserRepository,
     jpaQuizRepo: JpaQuizzesRepository,
     private val completionRepo: CompletionsOfQuizRepository,
@@ -54,7 +54,7 @@ class QuizServiceTest @Autowired constructor(
         ZoneOffset.UTC
     ).apply {
         if (this == null) {
-            throw IllegalStateException("Failed to instantiate clock in ${QuizServiceTest::class}")
+            throw IllegalStateException("Failed to instantiate clock in ${QuizServiceIntegrationTest::class}")
         }
     }
 
