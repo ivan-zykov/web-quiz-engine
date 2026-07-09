@@ -9,7 +9,7 @@ Provides REST endpoints for registering users, creating, retrieving, deleting qu
 - Spring Boot
 - Spring Data JPA
 - Spring Security
-- H2
+- H28
 - Gradle
 
 ## Architecture
@@ -49,15 +49,61 @@ gradlew.bat bootRun
 
 http://localhost:8889
 
-## API Overview
+## API endpoints & request examples with HTTPie
 
-- POST /api/register — register a new user
-- POST /api/quizzes — create a quiz
-- GET /api/quizzes/{id} — retrieve a quiz
-- GET /api/quizzes — retrieve all quiz, paginated
-- POST /api/quizzes/{id}/solve — submit an answer
-- DELETE /api/quizzes/{id} — delete a quiz
-- GET /api/quizzes/completed — get all quiz completions for the user, paginated
+### Register a new user
+
+`POST /api/register`
+```shell
+http POST :8889/api/register email=<email> password=<pass>
+```
+
+### Create a new quiz
+
+`POST /api/quizzes`
+```shell
+http POST :8889/api/quizzes \
+    title="My name" \
+    text="What is my name?" \
+    options:='["Vanya", "Joe"]' \
+    answer:='[0]' \
+    -a <email> and <pass>
+```
+
+### Retrieve a quiz
+
+`GET /api/quizzes/{id}`
+```shell
+http :8889/api/quizzes/<id> -a <email> and <pass>
+```
+
+### Retrieve all quizzes, paginated
+
+`GET /api/quizzes`
+```shell
+http :8889/api/quizzes -a <email> and <pass>
+```
+
+### Submit an answer
+
+`POST /api/quizzes/{id}/solve`
+```shell
+http POST :8889/api/quizzes/1/solve answer:='[<answerId>]' -a <email> and <pass>
+```
+
+### Delete a quiz
+
+`DELETE /api/quizzes/{id}`
+```shell
+http DELETE :8889/api/quizzes/<quizId> -a <email> and <pass>
+```
+
+### Get all quiz completions for the user, paginated
+
+`GET /api/quizzes/completed`
+```shell
+http :8889/api/quizzes/completed?page=<pageNumber> -a <email> and <pass>
+```
 
 ## Future improvements
 
