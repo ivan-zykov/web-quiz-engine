@@ -23,7 +23,7 @@ class CompletionOfQuizEntity {
     var quiz: QuizEntity? = null
 
     @ManyToOne
-    @JoinColumn(name = "userCompleted")
+    @JoinColumn(name = "userId")
     var user: AppUserEntity? = null
 
     @Column(name = "completedAt")

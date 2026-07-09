@@ -37,6 +37,6 @@ class QuizEntity {
     var answers: List<Int>? = null
 
     @ManyToOne
-    @JoinColumn(name = "author")
+    @JoinColumn(name = "userId")
     var author: AppUserEntity? = null
 }
