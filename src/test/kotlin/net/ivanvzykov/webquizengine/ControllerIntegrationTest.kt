@@ -35,6 +35,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import tools.jackson.databind.ObjectMapper
+import java.net.URI
 import kotlin.apply
 
 private const val API_PATH = "/api"
@@ -93,7 +94,7 @@ class ControllerIntegrationTest @Autowired constructor(
     }
 
     @Test
-    fun `Adding quiz returns OK with created quiz`() {
+    fun `Adding quiz returns Created with created quiz`() {
         val headers = HttpHeaders().apply {
             this.contentType = MediaType.APPLICATION_JSON
             this.setBasicAuth(USERNAME, PASSWORD)
@@ -103,8 +104,8 @@ class ControllerIntegrationTest @Autowired constructor(
         val response = restTemplate.postForEntity<QuizOutDto>("$API_PATH/quizzes", request)
 
         assertAll(
-            { assertThat(response.statusCode).isEqualTo(HttpStatus.OK) },
-            { assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON) },
+            { assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED) },
+            { assertThat(response.headers.location).isEqualTo(URI.create("/api/quizzes/${response.body?.id?.value}")) },
             { assertThat(response.body?.id).isNotNull },
             { assertThat(response.body?.title).isEqualTo(quiz.title) },
             { assertThat(response.body?.text).isEqualTo(quiz.text) },

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+import java.net.URI
 
 @Suppress("unused")
 @RestController
@@ -29,7 +30,7 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
         val createdQuiz = quizService.addQuiz(quiz.toNewQuiz(), userDetails)
 
         return ResponseEntity
-            .ok()
+            .created(URI.create("/api/quizzes/${createdQuiz.id.value}"))
             .body(createdQuiz.toDto())
     }
 
