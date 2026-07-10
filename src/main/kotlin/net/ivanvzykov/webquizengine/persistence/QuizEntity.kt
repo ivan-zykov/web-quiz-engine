@@ -29,11 +29,11 @@ class QuizEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @Column(name = "options")
+    @Column(name = "option")
     var options: List<String>? = null
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "answers")
+    @Column(name = "answer")
     var answers: List<Int>? = null
 
     @ManyToOne
