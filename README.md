@@ -67,42 +67,42 @@ http POST :8889/api/quizzes \
     text="What is my name?" \
     options:='["Vanya", "Joe"]' \
     answer:='[0]' \
-    -a <email> and <pass>
+    -a <email>:<pass>
 ```
 
 ### Retrieve a quiz
 
 `GET /api/quizzes/{id}`
 ```shell
-http :8889/api/quizzes/<id> -a <email> and <pass>
+http :8889/api/quizzes/<id> -a <email>:<pass>
 ```
 
 ### Retrieve all quizzes, paginated
 
 `GET /api/quizzes`
 ```shell
-http :8889/api/quizzes -a <email> and <pass>
+http :8889/api/quizzes -a <email>:<pass>
 ```
 
 ### Submit an answer
 
 `POST /api/quizzes/{id}/solve`
 ```shell
-http POST :8889/api/quizzes/1/solve answer:='[<answerId>]' -a <email> and <pass>
+http POST :8889/api/quizzes/1/solve answer:='[<answerId>]' -a <email>:<pass>
 ```
 
 ### Delete a quiz
 
 `DELETE /api/quizzes/{id}`
 ```shell
-http DELETE :8889/api/quizzes/<quizId> -a <email> and <pass>
+http DELETE :8889/api/quizzes/<quizId> -a <email>:<pass>
 ```
 
 ### Get all quiz completions for the user, paginated
 
 `GET /api/quizzes/completed`
 ```shell
-http :8889/api/quizzes/completed?page=<pageNumber> -a <email> and <pass>
+http :8889/api/quizzes/completed?page=<pageNumber> -a <email>:<pass>
 ```
 
 ## Future improvements
