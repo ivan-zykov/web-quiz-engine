@@ -12,7 +12,7 @@ class AppUserEntity(
     @Column(name = "id")
     var id: Int = 0,
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     var username: String = "",
 
     @Column(name = "password")
