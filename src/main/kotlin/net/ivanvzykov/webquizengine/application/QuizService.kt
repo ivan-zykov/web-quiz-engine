@@ -7,6 +7,7 @@ import net.ivanvzykov.webquizengine.persistence.CompletionsOfQuizRepository
 import net.ivanvzykov.webquizengine.persistence.JpaQuizzesRepository
 import net.ivanvzykov.webquizengine.persistence.QuizEntity
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -91,17 +92,17 @@ class QuizService @Autowired constructor(
     }
 
     fun registerNewUser(credentials: UserCredentials) {
-        val existingUser = userRepo.findByUsername(credentials.email)
-        if (existingUser != null) {
-            throw DuplicatedUserException("User with email ${credentials.email} already exists")
-        }
         val passwordEncoded = passwordEncoder.encode(credentials.password)
             ?: throw IllegalStateException("Failed to encode user's password")
         val newUser = AppUserEntity(
             username = credentials.email,
             password = passwordEncoded
         )
-        userRepo.save(newUser)
+        try {
+            userRepo.saveAndFlush(newUser)
+        } catch (_: DataIntegrityViolationException) {
+            throw DuplicatedUserException("User with email ${credentials.email} already exists")
+        }
     }
 
     @Transactional
