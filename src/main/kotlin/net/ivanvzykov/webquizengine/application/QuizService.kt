@@ -63,12 +63,13 @@ class QuizService @Autowired constructor(
             .map { it.toDomain() }
     }
 
+    @Transactional
     fun solveQuizBy(
         id: QuizId,
         answer: Answer,
         userDetails: UserDetails
     ): AnswerResult {
-        val quizEntity = jpaQuizRepo.findById(id.value)
+        val quizEntity = jpaQuizRepo.findByIdForUpdate(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
         val quiz = quizEntity.toDomain()
 
@@ -110,7 +111,7 @@ class QuizService @Autowired constructor(
         id: QuizId,
         userDetails: UserDetails
     ) {
-        val quizEntity = jpaQuizRepo.findById(id.value)
+        val quizEntity = jpaQuizRepo.findByIdForUpdate(id.value)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
         val quiz = quizEntity.toDomain()
 
