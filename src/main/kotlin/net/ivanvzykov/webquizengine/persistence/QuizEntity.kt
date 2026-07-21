@@ -1,5 +1,6 @@
 package net.ivanvzykov.webquizengine.persistence
 
+import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
@@ -28,11 +29,19 @@ class QuizEntity {
     var text: String? = null
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "quiz_options",
+        joinColumns = [JoinColumn(name = "quiz_id")]
+    )
     @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "option")
     var options: List<String>? = null
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "quiz_answers",
+        joinColumns = [JoinColumn(name = "quiz_id")]
+    )
     @Column(name = "answer")
     var answers: List<Int>? = null
 
