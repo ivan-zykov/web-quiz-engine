@@ -11,8 +11,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
 
 @Entity
 @Table(name = "quizzes")
@@ -28,16 +26,15 @@ class QuizEntity {
     @Column(name = "text")
     var text: String? = null
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(
         name = "quiz_options",
         joinColumns = [JoinColumn(name = "quiz_id")]
     )
-    @Fetch(value = FetchMode.SUBSELECT)
     @Column(name = "option")
     var options: List<String>? = null
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(
         name = "quiz_answers",
         joinColumns = [JoinColumn(name = "quiz_id")]
@@ -45,7 +42,7 @@ class QuizEntity {
     @Column(name = "answer")
     var answers: List<Int>? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     var author: AppUserEntity? = null
 }
