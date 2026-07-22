@@ -5,6 +5,7 @@ import net.ivanvzykov.webquizengine.application.Answer
 import net.ivanvzykov.webquizengine.application.AnswerResult
 import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.NewQuiz
+import net.ivanvzykov.webquizengine.application.PublicQuiz
 import net.ivanvzykov.webquizengine.application.Quiz
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
@@ -115,6 +116,13 @@ private fun QuizInDto.toNewQuiz() = NewQuiz(
 )
 
 private fun Quiz.toDto() = QuizOutDto(
+    id = this.id,
+    title = this.title,
+    text = this.text,
+    options = this.options,
+)
+
+private fun PublicQuiz.toDto() = QuizOutDto(
     id = this.id,
     title = this.title,
     text = this.text,

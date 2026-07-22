@@ -16,4 +16,14 @@ interface JpaQuizzesRepository : JpaRepository<QuizEntity, Long> {
             """
     )
     fun findByIdForUpdate(id: Long): Optional<QuizEntity>
+
+    @Query(
+        """
+        select quiz
+        from QuizEntity quiz
+        left join fetch quiz.options
+        where quiz.id = :id
+        """
+    )
+    fun findWithOptionsBy(id: Long): Optional<QuizEntity>
 }

@@ -46,10 +46,10 @@ class QuizService @Autowired constructor(
     }
 
     @Transactional(readOnly = true)
-    fun getQuizBy(id: Long): Quiz =
-        jpaQuizRepo.findById(id)
+    fun getQuizBy(id: Long): PublicQuiz =
+        jpaQuizRepo.findWithOptionsBy(id)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
-            .toDomain()
+            .toPublicQuiz()
 
     @Transactional(readOnly = true)
     fun getAllQuizzesPaginated(pageNumber: Int): Page<Quiz> {
@@ -185,6 +185,13 @@ private fun QuizEntity.toDomain() = Quiz(
     answer = this.answers,
     id = requireNotNull(this.id) { "Error. QuizEntity.id must not be null" },
     authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" },
+)
+
+private fun QuizEntity.toPublicQuiz() = PublicQuiz(
+    id = requireNotNull(this.id) { "Error. QuizEntity.id must not be null" },
+    title = requireNotNull(this.title) { "Error. QuizEntity.title must not be null" },
+    text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
+    options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
 )
 
 private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(

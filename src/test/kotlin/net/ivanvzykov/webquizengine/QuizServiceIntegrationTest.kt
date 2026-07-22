@@ -135,8 +135,6 @@ class QuizServiceIntegrationTest @Autowired constructor(
             { assertEquals(savedQuiz.title, fetchedQuiz.title) },
             { assertEquals(savedQuiz.text, fetchedQuiz.text) },
             { assertEquals(savedQuiz.options, fetchedQuiz.options) },
-            { assertEquals(savedQuiz.answer, fetchedQuiz.answer) },
-            { assertEquals(user.username, fetchedQuiz.authorUsername) }
         )
     }
 
