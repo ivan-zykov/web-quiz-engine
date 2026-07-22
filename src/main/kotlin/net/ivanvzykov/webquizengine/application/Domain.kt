@@ -9,15 +9,12 @@ data class NewQuiz(
     val answer: List<Int>?,
 )
 
-@JvmInline
-value class QuizId(val value: Long)
-
 data class Quiz(
     val title: String,
     val text: String,
     val options: List<String>,
     val answer: List<Int>?,
-    val id: QuizId,
+    val id: Long,
     val authorUsername: String,
 )
 

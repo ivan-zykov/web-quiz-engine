@@ -46,9 +46,9 @@ class QuizService @Autowired constructor(
     }
 
     @Transactional(readOnly = true)
-    fun getQuizBy(id: QuizId): Quiz =
-        jpaQuizRepo.findById(id.value)
-            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
+    fun getQuizBy(id: Long): Quiz =
+        jpaQuizRepo.findById(id)
+            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
             .toDomain()
 
     @Transactional(readOnly = true)
@@ -65,12 +65,12 @@ class QuizService @Autowired constructor(
 
     @Transactional
     fun solveQuizBy(
-        id: QuizId,
+        id: Long,
         answer: Answer,
         userDetails: UserDetails
     ): AnswerResult {
-        val quizEntity = jpaQuizRepo.findByIdForUpdate(id.value)
-            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
+        val quizEntity = jpaQuizRepo.findByIdForUpdate(id)
+            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
         val quiz = quizEntity.toDomain()
 
         val (success, feedback) = quiz.check(answer)
@@ -108,16 +108,16 @@ class QuizService @Autowired constructor(
 
     @Transactional
     fun deleteQuizBy(
-        id: QuizId,
+        id: Long,
         userDetails: UserDetails
     ) {
-        val quizEntity = jpaQuizRepo.findByIdForUpdate(id.value)
-            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
+        val quizEntity = jpaQuizRepo.findByIdForUpdate(id)
+            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
         val quiz = quizEntity.toDomain()
 
         if (userDetails.username != quiz.authorUsername) {
             throw AccessDeniedException(
-                "Error. Username ${userDetails.username} doesn't math the author's username of quiz with ID ${id.value}."
+                "Error. Username ${userDetails.username} doesn't math the author's username of quiz with ID ${id}."
             )
         }
 
@@ -125,19 +125,19 @@ class QuizService @Autowired constructor(
             .map { it.toDomain() }
         completions.forEach { completionRepo.deleteById(it.id) }
 
-        jpaQuizRepo.deleteById(id.value)
+        jpaQuizRepo.deleteById(id)
     }
 
     @Transactional(readOnly = true)
-    fun getTenCompletionsPaginatedSortedDescBy(id: QuizId, pageNumber: Int): Page<CompletionOfQuiz> {
+    fun getTenCompletionsPaginatedSortedDescBy(id: Long, pageNumber: Int): Page<CompletionOfQuiz> {
         val pageWithMaxTenSortedByCompletionDesc: Pageable = PageRequest.of(
             pageNumber,
             PAGE_SIZE,
             Sort.by("completedAt").descending()
         )
 
-        val quizEntity: QuizEntity = jpaQuizRepo.findById(id.value)
-            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id.value)) }
+        val quizEntity: QuizEntity = jpaQuizRepo.findById(id)
+            .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
 
         return completionRepo.findByQuiz(quizEntity, pageWithMaxTenSortedByCompletionDesc)
             .map { it.toDomain() }
@@ -183,7 +183,7 @@ private fun QuizEntity.toDomain() = Quiz(
     text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
     options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
     answer = this.answers,
-    id = QuizId(requireNotNull(this.id) { "Error. QuizEntity.id must not be null" }),
+    id = requireNotNull(this.id) { "Error. QuizEntity.id must not be null" },
     authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" },
 )
 

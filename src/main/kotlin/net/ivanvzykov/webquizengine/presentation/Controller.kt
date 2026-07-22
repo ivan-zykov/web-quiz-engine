@@ -6,7 +6,6 @@ import net.ivanvzykov.webquizengine.application.AnswerResult
 import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.NewQuiz
 import net.ivanvzykov.webquizengine.application.Quiz
-import net.ivanvzykov.webquizengine.application.QuizId
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,12 +29,12 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
         val createdQuiz = quizService.addQuiz(quiz.toNewQuiz(), userDetails)
 
         return ResponseEntity
-            .created(URI.create("/api/quizzes/${createdQuiz.id.value}"))
+            .created(URI.create("/api/quizzes/${createdQuiz.id}"))
             .body(createdQuiz.toDto())
     }
 
     @GetMapping("/quizzes/{id}")
-    fun getQuizBy(@PathVariable id: QuizId): ResponseEntity<QuizOutDto> {
+    fun getQuizBy(@PathVariable id: Long): ResponseEntity<QuizOutDto> {
         val quiz = quizService.getQuizBy(id)
 
         return ResponseEntity
@@ -45,7 +44,7 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
 
     @DeleteMapping("/quizzes/{id}")
     fun deleteQuizById(
-        @PathVariable id: QuizId,
+        @PathVariable id: Long,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<Void> {
         quizService.deleteQuizBy(id, userDetails)
@@ -66,7 +65,7 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
 
     @PostMapping("/quizzes/{id}/solve")
     fun solveQuizBy(
-        @PathVariable id: QuizId,
+        @PathVariable id: Long,
         @RequestBody answer: AnswerDto,
         @AuthenticationPrincipal userDetails: UserDetails,
     ): ResponseEntity<ResultDto> {
@@ -123,7 +122,7 @@ private fun Quiz.toDto() = QuizOutDto(
 )
 
 private fun CompletionOfQuiz.toDto() = CompletionOfQuizDto(
-    id = this.quiz.id.value,
+    id = this.quiz.id,
     completedAt = this.completedAt
 )
 

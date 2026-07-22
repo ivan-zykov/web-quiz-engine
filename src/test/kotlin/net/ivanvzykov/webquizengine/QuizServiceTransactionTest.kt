@@ -91,7 +91,7 @@ class QuizServiceTransactionTest @Autowired constructor(
             sut.deleteQuizBy(id = quiz.id, userDetails = userDetails)
         }
 
-        val persistedQuiz = quizRepo.findById(quiz.id.value)
+        val persistedQuiz = quizRepo.findById(quiz.id)
 
         assertTrue(persistedQuiz.isPresent)
         assertEquals(1, completionRepo.findAll().size)

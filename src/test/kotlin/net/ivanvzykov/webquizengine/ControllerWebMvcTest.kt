@@ -5,7 +5,6 @@ import io.mockk.every
 import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.DuplicatedUserException
 import net.ivanvzykov.webquizengine.application.Quiz
-import net.ivanvzykov.webquizengine.application.QuizId
 import net.ivanvzykov.webquizengine.application.QuizNotFoundException
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.config.SecurityConfig
@@ -43,7 +42,7 @@ class ControllerWebMvcTest @Autowired constructor(
     @Test
     fun `Getting quiz by id returns Not found for non-existing id`() {
         val quizId = 0L
-        every { quizService.getQuizBy(QuizId(quizId)) }
+        every { quizService.getQuizBy(quizId) }
             .throws(QuizNotFoundException("Error. Quiz with ID $quizId not found."))
 
         mockMvc.get("$API_PATH/quizzes/$quizId")

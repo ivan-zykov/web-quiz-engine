@@ -4,11 +4,10 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import net.ivanvzykov.webquizengine.application.QuizId
 import java.time.LocalDateTime
 
 data class QuizOutDto(
-    val id: QuizId,
+    val id: Long,
     val title: String,
     val text: String,
     val options: List<String>,

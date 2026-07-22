@@ -105,7 +105,7 @@ class ControllerIntegrationTest @Autowired constructor(
 
         assertAll(
             { assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED) },
-            { assertThat(response.headers.location).isEqualTo(URI.create("/api/quizzes/${response.body?.id?.value}")) },
+            { assertThat(response.headers.location).isEqualTo(URI.create("/api/quizzes/${response.body?.id}")) },
             { assertThat(response.body?.id).isNotNull },
             { assertThat(response.body?.title).isEqualTo(quiz.title) },
             { assertThat(response.body?.text).isEqualTo(quiz.text) },
@@ -168,7 +168,7 @@ class ControllerIntegrationTest @Autowired constructor(
 
     @Test
     fun `Getting quiz by id returns OK with one quiz`() {
-        val addedQuizId = addQuizNew(quiz).id.value
+        val addedQuizId = addQuizNew(quiz).id
         val headers = HttpHeaders().apply {
             this.setBasicAuth(USERNAME, PASSWORD)
         }
@@ -231,7 +231,7 @@ class ControllerIntegrationTest @Autowired constructor(
 
     @Test
     fun `Solving quiz by ID returns OK`() {
-        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val idOfAddedQuiz = addQuizNew(quiz).id
         val headers = HttpHeaders().apply {
             this.contentType = MediaType.APPLICATION_JSON
             this.setBasicAuth(USERNAME, PASSWORD)
@@ -254,7 +254,7 @@ class ControllerIntegrationTest @Autowired constructor(
 
     @Test
     fun `Getting completed quizzes returns page with one completion`() {
-        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val idOfAddedQuiz = addQuizNew(quiz).id
         val headers = HttpHeaders().apply {
             this.contentType = MediaType.APPLICATION_JSON
             this.setBasicAuth(USERNAME, PASSWORD)
@@ -290,7 +290,7 @@ class ControllerIntegrationTest @Autowired constructor(
 
     @Test
     fun `Deleting quiz by ID returns No content for same user as author`() {
-        val idOfAddedQuiz = addQuizNew(quiz).id.value
+        val idOfAddedQuiz = addQuizNew(quiz).id
         val headers = HttpHeaders().apply {
             this.setBasicAuth(USERNAME, PASSWORD)
         }

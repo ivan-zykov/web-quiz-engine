@@ -4,7 +4,6 @@ import net.ivanvzykov.webquizengine.application.Answer
 import net.ivanvzykov.webquizengine.application.AnswerResult
 import net.ivanvzykov.webquizengine.application.NewQuiz
 import net.ivanvzykov.webquizengine.config.PasswordEncoderConfig
-import net.ivanvzykov.webquizengine.application.QuizId
 import net.ivanvzykov.webquizengine.application.QuizNotFoundException
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
@@ -237,7 +236,7 @@ class QuizServiceIntegrationTest @Autowired constructor(
         val quizId = 1L
 
         val exception = assertThrows<QuizNotFoundException> {
-            sut.solveQuizBy(id = QuizId(quizId), answer = Answer(listOf()), userDetails = userDetails)
+            sut.solveQuizBy(id = quizId, answer = Answer(listOf()), userDetails = userDetails)
         }
         assertEquals("Error. Quiz with ID $quizId not found.", exception.message)
     }
@@ -304,7 +303,7 @@ class QuizServiceIntegrationTest @Autowired constructor(
             sut.deleteQuizBy(quiz.id, otherUserDetails)
         }
         assertEquals(
-            "Error. Username ${otherUser.username} doesn't math the author's username of quiz with ID ${quiz.id.value}.",
+            "Error. Username ${otherUser.username} doesn't math the author's username of quiz with ID ${quiz.id}.",
             exception.message
         )
     }
@@ -312,7 +311,7 @@ class QuizServiceIntegrationTest @Autowired constructor(
     @Test
     fun `Getting completions by non-existing quiz throws`() {
         assertThrows<QuizNotFoundException> {
-            sut.getTenCompletionsPaginatedSortedDescBy(QuizId(99L), 1)
+            sut.getTenCompletionsPaginatedSortedDescBy(99L, 1)
         }
     }
 
@@ -340,8 +339,8 @@ class QuizServiceIntegrationTest @Autowired constructor(
             { assertEquals(10, completions.size) },
             { assertEquals(1, completions.totalPages) },
             { assertEquals(2, completions.totalElements) },
-            { assertEquals(quiz.id.value, completions.content[0].quiz.id.value) },
-            { assertEquals(quiz.id.value, completions.content[1].quiz.id.value) }
+            { assertEquals(quiz.id, completions.content[0].quiz.id) },
+            { assertEquals(quiz.id, completions.content[1].quiz.id) }
         )
     }
 
@@ -396,18 +395,18 @@ class QuizServiceIntegrationTest @Autowired constructor(
         val completionsPage1 = sut.getAllCompletionsPaginatedSortedByCompletedAtDescBy(userDetails, 1)
         val expectedCompletedAt = LocalDateTime.ofInstant(Instant.parse(dateTimeString), ZoneOffset.UTC)
         val expectedPage0QuizIds = listOf(
-            quiz1.id.value,
-            quiz1.id.value,
-            quiz1.id.value,
-            quiz1.id.value,
-            quiz1.id.value,
-            quiz1.id.value,
-            quiz2.id.value,
-            quiz2.id.value,
-            quiz2.id.value,
-            quiz2.id.value,
+            quiz1.id,
+            quiz1.id,
+            quiz1.id,
+            quiz1.id,
+            quiz1.id,
+            quiz1.id,
+            quiz2.id,
+            quiz2.id,
+            quiz2.id,
+            quiz2.id,
         )
-        val expectedPage1QuizIds = listOf(quiz2.id.value)
+        val expectedPage1QuizIds = listOf(quiz2.id)
 
         assertAll(
             { assertEquals(2, completionsPage0.totalPages) },
@@ -418,8 +417,8 @@ class QuizServiceIntegrationTest @Autowired constructor(
             { assertEquals(11, completionsPage1.totalElements) },
             { assertEquals(10, completionsPage1.size) },
             { assertEquals(1, completionsPage1.content.size) },
-            { assertEquals(expectedPage0QuizIds, completionsPage0.content.map { it.quiz.id.value }) },
-            { assertEquals(expectedPage1QuizIds, completionsPage1.content.map { it.quiz.id.value }) },
+            { assertEquals(expectedPage0QuizIds, completionsPage0.content.map { it.quiz.id }) },
+            { assertEquals(expectedPage1QuizIds, completionsPage1.content.map { it.quiz.id }) },
             { assertTrue(completionsPage0.content.all { it.userName == user.username }) },
             { assertTrue(completionsPage1.content.all { it.userName == user.username }) },
             {
