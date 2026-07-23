@@ -36,13 +36,13 @@ class QuizService @Autowired constructor(
     private val passwordEncoder: PasswordEncoder,
     private val clock: Clock,
 ) {
-    fun addQuiz(newQuiz: NewQuiz, userDetails: UserDetails): Quiz {
+    fun addQuiz(newQuiz: NewQuiz, userDetails: UserDetails): PublicQuiz {
         val user = userRepo.findByUsername(userDetails.username)
             ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
 
         val entity = newQuiz.toEntity(user)
 
-        return jpaQuizRepo.save(entity).toDomain()
+        return jpaQuizRepo.save(entity).toPublicQuiz()
     }
 
     @Transactional(readOnly = true)
