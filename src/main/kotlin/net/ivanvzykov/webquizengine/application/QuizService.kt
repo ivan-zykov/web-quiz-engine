@@ -52,7 +52,7 @@ class QuizService @Autowired constructor(
             .toPublicQuiz()
 
     @Transactional(readOnly = true)
-    fun getAllQuizzesPaginated(pageNumber: Int): Page<Quiz> {
+    fun getAllQuizzesPaginated(pageNumber: Int): Page<PublicQuiz> {
         val pageWithMaxTenQuizzes: Pageable = PageRequest.of(
             pageNumber,
             PAGE_SIZE,
@@ -60,7 +60,7 @@ class QuizService @Autowired constructor(
         )
 
         return jpaQuizRepo.findAll(pageWithMaxTenQuizzes)
-            .map { it.toDomain() }
+            .map { it.toPublicQuiz() }
     }
 
     @Transactional
