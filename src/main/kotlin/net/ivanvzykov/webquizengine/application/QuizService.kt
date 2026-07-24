@@ -56,6 +56,7 @@ class QuizService @Autowired constructor(
         val pageWithMaxTenQuizzes: Pageable = PageRequest.of(
             pageNumber,
             PAGE_SIZE,
+            // todo: Remove sorting here
             Sort.by("id").ascending()
         )
 
