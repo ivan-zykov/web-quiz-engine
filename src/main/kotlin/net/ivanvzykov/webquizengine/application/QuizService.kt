@@ -9,6 +9,7 @@ import net.ivanvzykov.webquizengine.persistence.QuizEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -56,12 +57,20 @@ class QuizService @Autowired constructor(
         val pageWithMaxTenQuizzes: Pageable = PageRequest.of(
             pageNumber,
             PAGE_SIZE,
-            // todo: Remove sorting here
-            Sort.by("id").ascending()
         )
 
-        return jpaQuizRepo.findAll(pageWithMaxTenQuizzes)
+        val idsPage = jpaQuizRepo.findIds(pageWithMaxTenQuizzes)
+        if (idsPage.isEmpty) {
+            return Page.empty(pageWithMaxTenQuizzes)
+        }
+        val quizzes = jpaQuizRepo.findAllWithOptionsByIdIn(idsPage.content)
             .map { it.toPublicQuiz() }
+
+        return PageImpl(
+            quizzes,
+            pageWithMaxTenQuizzes,
+            idsPage.totalElements
+        )
     }
 
     @Transactional
