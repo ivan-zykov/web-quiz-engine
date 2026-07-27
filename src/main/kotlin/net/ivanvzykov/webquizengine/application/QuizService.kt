@@ -86,14 +86,7 @@ class QuizService @Autowired constructor(
         val (success, feedback) = quiz.check(answer)
 
         if (success) {
-            val user = userRepo.findByUsername(userDetails.username)
-                ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
-
-            val completionEntity = CompletionOfQuizEntity()
-            completionEntity.quiz = quizEntity
-            completionEntity.user = user
-            completionEntity.completedAt = LocalDateTime.now(clock)
-            completionRepo.save(completionEntity)
+            saveCompletionFor(userDetails, quizEntity)
         }
 
         return AnswerResult(
@@ -165,6 +158,20 @@ class QuizService @Autowired constructor(
 
         return completionRepo.findByUserOrderByCompletedAtDescIdAsc(user, pageWithMaxTen)
             .map { it.toDomain() }
+    }
+
+    private fun saveCompletionFor(
+        userDetails: UserDetails,
+        quizEntity: QuizEntity?
+    ) {
+        val user = userRepo.findByUsername(userDetails.username)
+            ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
+
+        val completionEntity = CompletionOfQuizEntity()
+        completionEntity.quiz = quizEntity
+        completionEntity.user = user
+        completionEntity.completedAt = LocalDateTime.now(clock)
+        completionRepo.save(completionEntity)
     }
 }
 
