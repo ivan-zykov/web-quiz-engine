@@ -81,7 +81,7 @@ class QuizService @Autowired constructor(
     ): AnswerResult {
         val quizEntity = jpaQuizRepo.findByIdForUpdate(id)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
-        val quiz = quizEntity.toDomain()
+        val quiz = quizEntity.toSolvableQuiz()
 
         val (success, feedback) = quiz.check(answer)
 
@@ -175,9 +175,9 @@ class QuizService @Autowired constructor(
     }
 }
 
-private fun Quiz.check(answer: Answer) =
-    if (this.answer?.toSet() == answer.value.toSet() ||
-        (this.answer == null && answer.value.isEmpty())
+private fun SolvableQuiz.check(answer: Answer) =
+    if (this.answers?.toSet() == answer.value.toSet() ||
+        (this.answers == null && answer.value.isEmpty())
     ) {
         true to CONGRATULATIONS
     } else {
@@ -209,6 +209,10 @@ private fun QuizEntity.toPublicQuiz() = PublicQuiz(
     title = requireNotNull(this.title) { "Error. QuizEntity.title must not be null" },
     text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
     options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
+)
+
+private fun QuizEntity.toSolvableQuiz(): SolvableQuiz = SolvableQuiz(
+    answers = this.answers
 )
 
 private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(

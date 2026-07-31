@@ -10,7 +10,7 @@ import net.ivanvzykov.webquizengine.presentation.CompletionOfQuizDto
 import net.ivanvzykov.webquizengine.presentation.PageResponseDto
 import net.ivanvzykov.webquizengine.presentation.QuizInDto
 import net.ivanvzykov.webquizengine.presentation.QuizOutDto
-import net.ivanvzykov.webquizengine.presentation.ResultDto
+import net.ivanvzykov.webquizengine.presentation.AnswerResultDto
 import net.ivanvzykov.webquizengine.presentation.UserCredentialsDTO
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -239,7 +239,7 @@ class ControllerIntegrationTest @Autowired constructor(
         val answer = AnswerDto(listOf(0))
         val request = HttpEntity(answer, headers)
 
-        val response = restTemplate.postForEntity<ResultDto>(
+        val response = restTemplate.postForEntity<AnswerResultDto>(
             "$API_PATH/quizzes/$idOfAddedQuiz/solve",
             request
         )
@@ -261,7 +261,7 @@ class ControllerIntegrationTest @Autowired constructor(
         }
         val answer = AnswerDto(listOf(0))
         val request = HttpEntity(answer, headers)
-        restTemplate.postForEntity<ResultDto>(
+        restTemplate.postForEntity<AnswerResultDto>(
             "$API_PATH/quizzes/$idOfAddedQuiz/solve",
             request
         )

@@ -25,6 +25,10 @@ data class PublicQuiz(
     val options: List<String>,
 )
 
+data class SolvableQuiz(
+    val answers: List<Int>?,
+)
+
 data class AnswerResult(
     val success: Boolean,
     val feedback: String

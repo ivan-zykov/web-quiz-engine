@@ -69,7 +69,7 @@ class QuizEngineController @Autowired constructor(private val quizService: QuizS
         @PathVariable id: Long,
         @RequestBody answer: AnswerDto,
         @AuthenticationPrincipal userDetails: UserDetails,
-    ): ResponseEntity<ResultDto> {
+    ): ResponseEntity<AnswerResultDto> {
         val result = quizService.solveQuizBy(id, answer.toDomain(), userDetails)
 
         return ResponseEntity
@@ -103,7 +103,7 @@ private fun UserCredentialsDTO.toDomain() = UserCredentials(
     password = this.password,
 )
 
-private fun AnswerResult.toDto() = ResultDto(
+private fun AnswerResult.toDto() = AnswerResultDto(
     success = success,
     feedback = feedback,
 )

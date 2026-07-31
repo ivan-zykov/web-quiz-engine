@@ -13,7 +13,7 @@ data class QuizOutDto(
     val options: List<String>,
 )
 
-data class ResultDto(
+data class AnswerResultDto(
     val success: Boolean,
     val feedback: String
 )
