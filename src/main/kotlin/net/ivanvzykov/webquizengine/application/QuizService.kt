@@ -116,7 +116,7 @@ class QuizService @Autowired constructor(
     ) {
         val quizEntity = jpaQuizRepo.findByIdForUpdate(id)
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
-        val quiz = quizEntity.toDomain()
+        val quiz = quizEntity.toDeletableQuiz()
 
         if (userDetails.username != quiz.authorUsername) {
             throw AccessDeniedException(
@@ -124,11 +124,8 @@ class QuizService @Autowired constructor(
             )
         }
 
-        val completions = completionRepo.findByQuiz(quizEntity)
-            .map { it.toDomain() }
-        completions.forEach { completionRepo.deleteById(it.id) }
-
-        jpaQuizRepo.deleteById(id)
+        completionRepo.deleteInBulkByQuiz(quizEntity)
+        jpaQuizRepo.delete(quizEntity)
     }
 
     @Transactional(readOnly = true)
@@ -211,8 +208,12 @@ private fun QuizEntity.toPublicQuiz() = PublicQuiz(
     options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
 )
 
-private fun QuizEntity.toSolvableQuiz(): SolvableQuiz = SolvableQuiz(
+private fun QuizEntity.toSolvableQuiz() = SolvableQuiz(
     answers = this.answers
+)
+
+private fun QuizEntity.toDeletableQuiz() = DeletableQuiz(
+    authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" }
 )
 
 private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(

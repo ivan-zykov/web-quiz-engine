@@ -85,7 +85,7 @@ class QuizServiceTransactionTest @Autowired constructor(
         val result = sut.solveQuizBy(id = quiz.id, answer = Answer(listOf(2)), userDetails = userDetails)
         check(result.success) { "Failed to solve quiz in test" }
 
-        every { spyQuizRepo.deleteById(any()) } throws IllegalStateException("Trigger transaction rollback")
+        every { spyQuizRepo.delete(any()) } throws IllegalStateException("Trigger transaction rollback")
 
         assertThrows<IllegalStateException> {
             sut.deleteQuizBy(id = quiz.id, userDetails = userDetails)

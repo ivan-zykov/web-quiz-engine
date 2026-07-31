@@ -29,6 +29,10 @@ data class SolvableQuiz(
     val answers: List<Int>?,
 )
 
+data class DeletableQuiz(
+    val authorUsername: String,
+)
+
 data class AnswerResult(
     val success: Boolean,
     val feedback: String

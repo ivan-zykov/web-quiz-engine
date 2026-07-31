@@ -291,15 +291,27 @@ class ControllerIntegrationTest @Autowired constructor(
     @Test
     fun `Deleting quiz by ID returns No content for same user as author`() {
         val idOfAddedQuiz = addQuizNew(quiz).id
-        val headers = HttpHeaders().apply {
+        // Solve the quiz
+        val solveHeaders = HttpHeaders().apply {
+            this.contentType = MediaType.APPLICATION_JSON
             this.setBasicAuth(USERNAME, PASSWORD)
         }
-        val request = HttpEntity<Void>(headers)
+        val answer = AnswerDto(listOf(0))
+        val solveRequest = HttpEntity(answer, solveHeaders)
+        restTemplate.postForEntity<AnswerResultDto>(
+            "$API_PATH/quizzes/$idOfAddedQuiz/solve",
+            solveRequest
+        )
+        // Prepare deleting the quiz
+        val deleteHeaders = HttpHeaders().apply {
+            this.setBasicAuth(USERNAME, PASSWORD)
+        }
+        val deleteRequest = HttpEntity<Void>(deleteHeaders)
 
         val response = restTemplate.exchange(
             "$API_PATH/quizzes/$idOfAddedQuiz",
             HttpMethod.DELETE,
-            request,
+            deleteRequest,
             object : ParameterizedTypeReference<Void>() {}
         )
 
