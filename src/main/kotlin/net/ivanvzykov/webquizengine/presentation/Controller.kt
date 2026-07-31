@@ -6,7 +6,6 @@ import net.ivanvzykov.webquizengine.application.AnswerResult
 import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.NewQuiz
 import net.ivanvzykov.webquizengine.application.PublicQuiz
-import net.ivanvzykov.webquizengine.application.Quiz
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
 import org.springframework.beans.factory.annotation.Autowired
@@ -113,13 +112,6 @@ private fun QuizInDto.toNewQuiz() = NewQuiz(
     text = text,
     options = options,
     answer = answer,
-)
-
-private fun Quiz.toDto() = QuizOutDto(
-    id = this.id,
-    title = this.title,
-    text = this.text,
-    options = this.options,
 )
 
 private fun PublicQuiz.toDto() = QuizOutDto(
