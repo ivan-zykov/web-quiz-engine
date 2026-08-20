@@ -9,15 +9,6 @@ data class NewQuiz(
     val answer: List<Int>?,
 )
 
-data class Quiz(
-    val title: String,
-    val text: String,
-    val options: List<String>,
-    val answer: List<Int>?,
-    val id: Long,
-    val authorUsername: String,
-)
-
 data class PublicQuiz(
     val id: Long,
     val title: String,
@@ -48,7 +39,7 @@ data class UserCredentials(
 
 data class CompletionOfQuiz(
     val id: Long,
-    val quiz: Quiz,
+    val quiz: PublicQuiz,
     val userName: String,
     val completedAt: LocalDateTime,
 )

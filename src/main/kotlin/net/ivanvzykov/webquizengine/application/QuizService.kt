@@ -192,15 +192,6 @@ private fun NewQuiz.toEntity(user: AppUserEntity): QuizEntity {
     return entity
 }
 
-private fun QuizEntity.toDomain() = Quiz(
-    title = requireNotNull(this.title) { "Error. QuizEntity.title must not be null" },
-    text = requireNotNull(this.text) { "Error. QuizEntity.text must not be null" },
-    options = requireNotNull(this.options) { "Error. QuizEntity.options must not be null" },
-    answer = this.answers,
-    id = requireNotNull(this.id) { "Error. QuizEntity.id must not be null" },
-    authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" },
-)
-
 private fun QuizEntity.toPublicQuiz() = PublicQuiz(
     id = requireNotNull(this.id) { "Error. QuizEntity.id must not be null" },
     title = requireNotNull(this.title) { "Error. QuizEntity.title must not be null" },
@@ -218,7 +209,7 @@ private fun QuizEntity.toDeletableQuiz() = DeletableQuiz(
 
 private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(
     id = requireNotNull(this.id) { "Error. CompletionOfQuizEntity.id must not be null" },
-    quiz = requireNotNull(this.quiz) { "Error. CompletionOfQuizEntity.quiz must not be null" }.toDomain(),
+    quiz = requireNotNull(this.quiz) { "Error. CompletionOfQuizEntity.quiz must not be null" }.toPublicQuiz(),
     userName = requireNotNull(this.user?.username) { "Error. Error. CompletionOfQuizEntity.user.username must not be null" },
     completedAt = requireNotNull(this.completedAt) { "Error. CompletionOfQuizEntity.completedAt must not be null" },
 )
