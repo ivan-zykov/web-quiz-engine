@@ -332,8 +332,8 @@ class QuizServiceIntegrationTest @Autowired constructor(
             { assertEquals(10, completions.size) },
             { assertEquals(1, completions.totalPages) },
             { assertEquals(2, completions.totalElements) },
-            { assertEquals(quiz.id, completions.content[0].quiz.id) },
-            { assertEquals(quiz.id, completions.content[1].quiz.id) }
+            { assertEquals(quiz.id, completions.content[0].quizId) },
+            { assertEquals(quiz.id, completions.content[1].quizId) }
         )
     }
 
@@ -410,10 +410,8 @@ class QuizServiceIntegrationTest @Autowired constructor(
             { assertEquals(11, completionsPage1.totalElements) },
             { assertEquals(10, completionsPage1.size) },
             { assertEquals(1, completionsPage1.content.size) },
-            { assertEquals(expectedPage0QuizIds, completionsPage0.content.map { it.quiz.id }) },
-            { assertEquals(expectedPage1QuizIds, completionsPage1.content.map { it.quiz.id }) },
-            { assertTrue(completionsPage0.content.all { it.userName == user.username }) },
-            { assertTrue(completionsPage1.content.all { it.userName == user.username }) },
+            { assertEquals(expectedPage0QuizIds, completionsPage0.content.map { it.quizId }) },
+            { assertEquals(expectedPage1QuizIds, completionsPage1.content.map { it.quizId }) },
             {
                 assertTrue(
                     completionsPage0.content.all {

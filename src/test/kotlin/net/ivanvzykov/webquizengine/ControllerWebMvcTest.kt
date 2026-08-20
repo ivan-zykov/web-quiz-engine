@@ -2,8 +2,8 @@ package net.ivanvzykov.webquizengine
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.DuplicatedUserException
+import net.ivanvzykov.webquizengine.application.PublicCompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.PublicQuiz
 import net.ivanvzykov.webquizengine.application.QuizNotFoundException
 import net.ivanvzykov.webquizengine.application.QuizService
@@ -78,7 +78,7 @@ class ControllerWebMvcTest @Autowired constructor(
 
     @Test
     fun `Getting completed quizzes returns page with empty content`() {
-        val mockedEmptyPage: Page<CompletionOfQuiz> = Page.empty(PageRequest.of(0, 10))
+        val mockedEmptyPage: Page<PublicCompletionOfQuiz> = Page.empty(PageRequest.of(0, 10))
         every {
             quizService.getAllCompletionsPaginatedSortedByCompletedAtDescBy(any(), 0)
         }.returns(mockedEmptyPage)

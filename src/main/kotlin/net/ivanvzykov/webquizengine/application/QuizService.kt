@@ -129,7 +129,7 @@ class QuizService @Autowired constructor(
     }
 
     @Transactional(readOnly = true)
-    fun getTenCompletionsPaginatedSortedDescBy(id: Long, pageNumber: Int): Page<CompletionOfQuiz> {
+    fun getTenCompletionsPaginatedSortedDescBy(id: Long, pageNumber: Int): Page<PublicCompletionOfQuiz> {
         val pageWithMaxTenSortedByCompletionDesc: Pageable = PageRequest.of(
             pageNumber,
             PAGE_SIZE,
@@ -140,21 +140,21 @@ class QuizService @Autowired constructor(
             .orElseThrow { QuizNotFoundException(QUIZ_NOT_FOUND_TEMPLATE.format(id)) }
 
         return completionRepo.findByQuiz(quizEntity, pageWithMaxTenSortedByCompletionDesc)
-            .map { it.toDomain() }
+            .map { it.toPublicCompletion() }
     }
 
     @Transactional(readOnly = true)
     fun getAllCompletionsPaginatedSortedByCompletedAtDescBy(
         userDetails: UserDetails,
         pageNumber: Int
-    ): Page<CompletionOfQuiz> {
+    ): Page<PublicCompletionOfQuiz> {
         val user = userRepo.findByUsername(userDetails.username)
             ?: throw UsernameNotFoundException(USERNAME_NOT_FOUND_TEMPLATE.format(userDetails.username))
 
         val pageWithMaxTen: Pageable = PageRequest.of(pageNumber, PAGE_SIZE)
 
         return completionRepo.findByUserOrderByCompletedAtDescIdAsc(user, pageWithMaxTen)
-            .map { it.toDomain() }
+            .map { it.toPublicCompletion() }
     }
 
     private fun saveCompletionFor(
@@ -207,9 +207,7 @@ private fun QuizEntity.toDeletableQuiz() = DeletableQuiz(
     authorUsername = requireNotNull(this.author?.username) { "Error. QuizEntity.author must not be null" }
 )
 
-private fun CompletionOfQuizEntity.toDomain() = CompletionOfQuiz(
-    id = requireNotNull(this.id) { "Error. CompletionOfQuizEntity.id must not be null" },
-    quiz = requireNotNull(this.quiz) { "Error. CompletionOfQuizEntity.quiz must not be null" }.toPublicQuiz(),
-    userName = requireNotNull(this.user?.username) { "Error. Error. CompletionOfQuizEntity.user.username must not be null" },
+private fun CompletionOfQuizEntity.toPublicCompletion() = PublicCompletionOfQuiz(
+    quizId = requireNotNull(this.quiz?.id) { "Error. CompletionOfQuizEntity.quiz.id must not be null" },
     completedAt = requireNotNull(this.completedAt) { "Error. CompletionOfQuizEntity.completedAt must not be null" },
 )

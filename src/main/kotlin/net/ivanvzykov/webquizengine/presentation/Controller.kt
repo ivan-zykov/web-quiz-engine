@@ -3,8 +3,8 @@ package net.ivanvzykov.webquizengine.presentation
 import jakarta.validation.Valid
 import net.ivanvzykov.webquizengine.application.Answer
 import net.ivanvzykov.webquizengine.application.AnswerResult
-import net.ivanvzykov.webquizengine.application.CompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.NewQuiz
+import net.ivanvzykov.webquizengine.application.PublicCompletionOfQuiz
 import net.ivanvzykov.webquizengine.application.PublicQuiz
 import net.ivanvzykov.webquizengine.application.QuizService
 import net.ivanvzykov.webquizengine.application.UserCredentials
@@ -121,8 +121,8 @@ private fun PublicQuiz.toDto() = QuizOutDto(
     options = this.options,
 )
 
-private fun CompletionOfQuiz.toDto() = CompletionOfQuizDto(
-    id = this.quiz.id,
+private fun PublicCompletionOfQuiz.toDto() = CompletionOfQuizDto(
+    id = this.quizId,
     completedAt = this.completedAt
 )
 

@@ -37,9 +37,7 @@ data class UserCredentials(
     val password: String
 )
 
-data class CompletionOfQuiz(
-    val id: Long,
-    val quiz: PublicQuiz,
-    val userName: String,
+data class PublicCompletionOfQuiz(
+    val quizId: Long,
     val completedAt: LocalDateTime,
 )
