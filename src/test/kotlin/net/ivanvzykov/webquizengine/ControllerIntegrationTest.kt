@@ -54,7 +54,7 @@ private val quiz = QuizInDto(
     title = TITLE,
     text = TEXT,
     options = options,
-    answer = listOf(0),
+    answers = listOf(0),
 )
 
 private val userCredentials = UserCredentialsDTO(

@@ -25,7 +25,7 @@ data class QuizInDto(
     val text: String,
     @field:Size(min = 2, message = "Field options should have at least two elements")
     val options: List<String>,
-    val answer: List<Int>?,
+    val answers: List<Int> = emptyList(),
 )
 
 data class AnswerDto(val answer: List<Int>)

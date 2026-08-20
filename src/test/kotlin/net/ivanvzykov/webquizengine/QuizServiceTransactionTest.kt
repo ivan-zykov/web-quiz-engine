@@ -48,7 +48,7 @@ class QuizServiceTransactionTest @Autowired constructor(
         title = "The Java Logo",
         text = "What is depicted on the Java logo?",
         options = listOf("Robot", "Tea leaf", "Cup of coffee", "Bug"),
-        answer = listOf(2),
+        answers = listOf(2),
     )
 
     private val userDetails: UserDetails = AppUserAdapter(

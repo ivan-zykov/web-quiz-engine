@@ -6,7 +6,7 @@ data class NewQuiz(
     val title: String,
     val text: String,
     val options: List<String>,
-    val answer: List<Int>?,
+    val answers: List<Int> = emptyList(),
 )
 
 data class PublicQuiz(

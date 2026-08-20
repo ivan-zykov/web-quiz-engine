@@ -16,7 +16,7 @@ class QuizInDtoTest {
             title = "",
             text = "",
             options = listOf("test option"),
-            answer = null,
+            answers = emptyList(),
         )
 
         val violations = validator.validate(sut)

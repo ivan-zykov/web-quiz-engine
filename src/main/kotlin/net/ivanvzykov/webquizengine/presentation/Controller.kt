@@ -111,7 +111,7 @@ private fun QuizInDto.toNewQuiz() = NewQuiz(
     title = title,
     text = text,
     options = options,
-    answer = answer,
+    answers = answers,
 )
 
 private fun PublicQuiz.toDto() = QuizOutDto(

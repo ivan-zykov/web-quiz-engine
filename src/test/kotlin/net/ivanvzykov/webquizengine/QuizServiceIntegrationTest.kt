@@ -91,7 +91,7 @@ class QuizServiceIntegrationTest @Autowired constructor(
         title = "The Java Logo",
         text = "What is depicted on the Java logo?",
         options = listOf("Robot", "Tea leaf", "Cup of coffee", "Bug"),
-        answer = listOf(2),
+        answers = listOf(2),
     )
     private val userCredentials = UserCredentials(
         email = "vanya@mail.com",
@@ -208,8 +208,8 @@ class QuizServiceIntegrationTest @Autowired constructor(
     }
 
     @Test
-    fun `Solves quiz with answers = null and empty provided answer`() {
-        val quizWithNullAnswer = newQuiz1.copy(answer = null)
+    fun `Solves quiz with empty answers and empty provided answer`() {
+        val quizWithNullAnswer = newQuiz1.copy(answers = emptyList())
         val addedQuizId = sut.addQuiz(newQuiz = quizWithNullAnswer, userDetails = userDetails).id
 
         val actual = sut.solveQuizBy(

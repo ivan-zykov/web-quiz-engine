@@ -186,7 +186,7 @@ private fun NewQuiz.toEntity(user: AppUserEntity): QuizEntity {
     entity.title = this.title
     entity.text = this.text
     entity.options = this.options
-    entity.answers = this.answer
+    entity.answers = this.answers
     entity.author = user
 
     return entity
