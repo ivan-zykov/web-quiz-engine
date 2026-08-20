@@ -22,6 +22,7 @@ The application follows a layered architecture separating web, business logic, a
 - Input validation using Spring validation
 - Centralized exception handling
 - Separation of domain models, DTOs and persistence entities
+- Use-case-specific domain models
 - Unit and integration tests
 - Basic HTTP authentication
 - New user registration with custom user store
