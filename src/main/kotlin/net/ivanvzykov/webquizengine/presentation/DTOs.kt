@@ -40,7 +40,7 @@ data class UserCredentialsDTO(
 )
 
 data class CompletionOfQuizDto(
-    val id: Long,
+    val quizId: Long,
     val completedAt: LocalDateTime,
 )
 

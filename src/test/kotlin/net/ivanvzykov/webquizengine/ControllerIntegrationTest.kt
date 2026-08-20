@@ -283,7 +283,7 @@ class ControllerIntegrationTest @Autowired constructor(
             { assertThat(response.body?.first).isTrue },
             { assertThat(response.body?.last).isTrue },
             { assertThat(response.body?.content).hasSize(1) },
-            { assertThat(response.body?.content?.first()?.id).isEqualTo(idOfAddedQuiz) },
+            { assertThat(response.body?.content?.first()?.quizId).isEqualTo(idOfAddedQuiz) },
             { assertThat(response.body?.content?.first()?.completedAt).isNotNull }
         )
     }

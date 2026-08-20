@@ -122,7 +122,7 @@ private fun PublicQuiz.toDto() = QuizOutDto(
 )
 
 private fun PublicCompletionOfQuiz.toDto() = CompletionOfQuizDto(
-    id = this.quizId,
+    quizId = this.quizId,
     completedAt = this.completedAt
 )
 
