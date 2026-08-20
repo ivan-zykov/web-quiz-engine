@@ -9,7 +9,7 @@ Provides REST endpoints for registering users, creating, retrieving, deleting qu
 - Spring Boot
 - Spring Data JPA
 - Spring Security
-- H28
+- H2
 - Gradle
 
 ## Architecture
